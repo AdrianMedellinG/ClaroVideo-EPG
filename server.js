@@ -12,6 +12,7 @@ const DEFAULT_PAIS = process.env.DEFAULT_PAIS || 'mexico';
 const DEFAULT_HOURS_BACK = Number(process.env.HOURS_BACK || 3);
 const DEFAULT_HOURS_AHEAD = Number(process.env.HOURS_AHEAD || 12);
 
+const SOCKS_PROXY_URL = process.env.SOCKS_PROXY_URL || '';
 const PROXY_HOST = process.env.PROXY_HOST || '';
 const PROXY_PORT = process.env.PROXY_PORT || '';
 const PROXY_USER = process.env.PROXY_USER || '';
@@ -213,6 +214,35 @@ function buildXml(data) {
   return xml;
 }
 
+function getProxyConfig() {
+  if (SOCKS_PROXY_URL) {
+    try {
+      const parsed = new URL(SOCKS_PROXY_URL);
+      return {
+        proxyServerArg: `${parsed.protocol}//${parsed.hostname}:${parsed.port}`,
+        username: decodeURIComponent(parsed.username || ''),
+        password: decodeURIComponent(parsed.password || ''),
+        display: `${parsed.protocol}//${parsed.hostname}:${parsed.port}`,
+        type: parsed.protocol.replace(':', '')
+      };
+    } catch (err) {
+      throw new Error(`SOCKS_PROXY_URL inválido: ${err.message}`);
+    }
+  }
+
+  if (PROXY_HOST && PROXY_PORT) {
+    return {
+      proxyServerArg: `http://${PROXY_HOST}:${PROXY_PORT}`,
+      username: PROXY_USER,
+      password: PROXY_PASS,
+      display: `http://${PROXY_HOST}:${PROXY_PORT}`,
+      type: 'http'
+    };
+  }
+
+  return null;
+}
+
 async function launchBrowser() {
   const args = [
     '--no-sandbox',
@@ -223,8 +253,9 @@ async function launchBrowser() {
     '--no-zygote'
   ];
 
-  if (PROXY_HOST && PROXY_PORT) {
-    args.push(`--proxy-server=http://${PROXY_HOST}:${PROXY_PORT}`);
+  const proxyConfig = getProxyConfig();
+  if (proxyConfig) {
+    args.push(`--proxy-server=${proxyConfig.proxyServerArg}`);
   }
 
   return puppeteer.launch({
@@ -236,11 +267,12 @@ async function launchBrowser() {
 
 async function preparePage(browser) {
   const page = await browser.newPage();
+  const proxyConfig = getProxyConfig();
 
-  if (PROXY_USER && PROXY_PASS) {
+  if (proxyConfig?.username && proxyConfig?.password) {
     await page.authenticate({
-      username: PROXY_USER,
-      password: PROXY_PASS,
+      username: proxyConfig.username,
+      password: proxyConfig.password,
     });
   }
 
@@ -285,9 +317,10 @@ async function fetchClaroVideoJsonWithPuppeteer({
   });
 
   const apiUrl = `https://mfwkweb-api.clarovideo.net/services/epg/channel?${params.toString()}`;
+  const proxyConfig = getProxyConfig();
 
   console.log('Consultando API:', apiUrl);
-  console.log('Proxy activo:', PROXY_HOST ? `${PROXY_HOST}:${PROXY_PORT}` : 'no');
+  console.log('Proxy activo:', proxyConfig ? proxyConfig.display : 'no');
 
   const browser = await launchBrowser();
 
@@ -475,6 +508,8 @@ app.get('/refresh', async (req, res) => {
 });
 
 app.get('/health', (req, res) => {
+  const proxyConfig = getProxyConfig();
+
   res.status(200).json({
     ok: true,
     isRunning,
@@ -482,20 +517,24 @@ app.get('/health', (req, res) => {
     lastSuccessAt,
     lastError,
     cacheExists: fs.existsSync(XML_PATH),
-    proxyEnabled: Boolean(PROXY_HOST && PROXY_PORT),
-    proxyHost: PROXY_HOST || null,
-    proxyPort: PROXY_PORT || null
+    proxyEnabled: Boolean(proxyConfig),
+    proxyType: proxyConfig?.type || null,
+    proxyDisplay: proxyConfig?.display || null,
+    proxyAuthEnabled: Boolean(proxyConfig?.username && proxyConfig?.password)
   });
 });
 
 app.get('/debug-ip', async (req, res) => {
   try {
     const ip = await getBrowserIp();
+    const proxyConfig = getProxyConfig();
+
     res.json({
       ok: true,
-      proxyEnabled: Boolean(PROXY_HOST && PROXY_PORT),
-      proxyHost: PROXY_HOST || null,
-      proxyPort: PROXY_PORT || null,
+      proxyEnabled: Boolean(proxyConfig),
+      proxyType: proxyConfig?.type || null,
+      proxyDisplay: proxyConfig?.display || null,
+      proxyAuthEnabled: Boolean(proxyConfig?.username && proxyConfig?.password),
       ip
     });
   } catch (error) {

@@ -3,14 +3,38 @@ const fs = require('fs');
 const path = require('path');
 const puppeteer = require('puppeteer');
 
+loadEnvFile(path.join(__dirname, '.env'));
+
 const app = express();
+app.disable('x-powered-by');
 
-const PORT = process.env.PORT || 3000;
-const XML_PATH = path.join(__dirname, 'clarovideo_epg.xml');
+const LEGACY_XML_PATH = path.join(__dirname, 'clarovideo_epg.xml');
+const CACHE_DIR = path.join(__dirname, 'cache');
+const CACHE_PREFIX = 'clarovideo_epg';
+const CRON_INTERVAL_MS = 6 * 60 * 60 * 1000;
+const MAX_HOURS_RANGE = 168;
 
-const DEFAULT_PAIS = process.env.DEFAULT_PAIS || 'mexico';
-const DEFAULT_HOURS_BACK = Number(process.env.HOURS_BACK || 3);
-const DEFAULT_HOURS_AHEAD = Number(process.env.HOURS_AHEAD || 12);
+const MOJIBAKE_REPLACEMENTS = new Map([
+  ['\u00c3\u00b1', '\u00f1'],
+  ['\u00c3\u00a1', '\u00e1'],
+  ['\u00c3\u00a9', '\u00e9'],
+  ['\u00c3\u00ad', '\u00ed'],
+  ['\u00c3\u00b3', '\u00f3'],
+  ['\u00c3\u00ba', '\u00fa'],
+  ['\u00c3\u2018', '\u00d1'],
+  ['\u00c3\u0081', '\u00c1'],
+  ['\u00c3\u0089', '\u00c9'],
+  ['\u00c3\u008d', '\u00cd'],
+  ['\u00c3\u201c', '\u00d3'],
+  ['\u00c3\u0161', '\u00da'],
+]);
+
+const PORT = getEnvPort(process.env.PORT, 3000);
+const PUPPETEER_EXECUTABLE_PATH = String(process.env.PUPPETEER_EXECUTABLE_PATH || '').trim();
+const DEFAULT_PAIS = sanitizePais(process.env.DEFAULT_PAIS || 'mexico', 'mexico');
+const DEFAULT_HOURS_BACK = getEnvHours('HOURS_BACK', 3);
+const DEFAULT_HOURS_AHEAD = getEnvHours('HOURS_AHEAD', 12);
+const ADMIN_TOKEN = String(process.env.ADMIN_TOKEN || '').trim();
 
 const SOCKS_PROXY_URL = process.env.SOCKS_PROXY_URL || '';
 const PROXY_HOST = process.env.PROXY_HOST || '';
@@ -18,12 +42,54 @@ const PROXY_PORT = process.env.PROXY_PORT || '';
 const PROXY_USER = process.env.PROXY_USER || '';
 const PROXY_PASS = process.env.PROXY_PASS || '';
 
-const CRON_INTERVAL_MS = 6 * 60 * 60 * 1000;
-
 let isRunning = false;
 let lastRunAt = null;
 let lastSuccessAt = null;
 let lastError = null;
+let lastDurationMs = null;
+let activeGeneration = null;
+let generationQueue = Promise.resolve();
+
+const pendingGenerations = new Map();
+
+function loadEnvFile(envPath) {
+  if (!fs.existsSync(envPath)) {
+    return;
+  }
+
+  const lines = fs.readFileSync(envPath, 'utf8').split(/\r?\n/);
+
+  for (const rawLine of lines) {
+    const line = rawLine.trim();
+
+    if (!line || line.startsWith('#')) {
+      continue;
+    }
+
+    const normalizedLine = line.startsWith('export ') ? line.slice(7) : line;
+    const separatorIndex = normalizedLine.indexOf('=');
+
+    if (separatorIndex === -1) {
+      continue;
+    }
+
+    const key = normalizedLine.slice(0, separatorIndex).trim();
+    let value = normalizedLine.slice(separatorIndex + 1).trim();
+
+    if (!key || Object.prototype.hasOwnProperty.call(process.env, key)) {
+      continue;
+    }
+
+    if (
+      (value.startsWith('"') && value.endsWith('"')) ||
+      (value.startsWith("'") && value.endsWith("'"))
+    ) {
+      value = value.slice(1, -1);
+    }
+
+    process.env[key] = value;
+  }
+}
 
 function xmlEscape(value = '') {
   return String(value)
@@ -35,16 +101,116 @@ function xmlEscape(value = '') {
 }
 
 function normalizeText(text = '') {
-  const map = {
-    ñ: 'n', á: 'a', é: 'e', í: 'i', ó: 'o', ú: 'u',
-    Ñ: 'N', Á: 'A', É: 'E', Í: 'I', Ó: 'O', Ú: 'U'
-  };
+  let value = String(text);
 
-  return String(text).replace(/[ñáéíóúÑÁÉÍÓÚ]/g, (m) => map[m] || m);
+  for (const [broken, fixed] of MOJIBAKE_REPLACEMENTS) {
+    value = value.replaceAll(broken, fixed);
+  }
+
+  return value;
+}
+
+function stripDiacritics(text = '') {
+  return normalizeText(text)
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
 }
 
 function pad(n) {
   return String(n).padStart(2, '0');
+}
+
+function getEnvPort(value, fallback) {
+  const parsed = Number(value);
+
+  if (Number.isInteger(parsed) && parsed > 0 && parsed <= 65535) {
+    return parsed;
+  }
+
+  return fallback;
+}
+
+function getEnvHours(name, fallback) {
+  const raw = process.env[name];
+
+  if (raw == null || raw === '') {
+    return fallback;
+  }
+
+  const parsed = Number(raw);
+
+  if (Number.isInteger(parsed) && parsed >= 0 && parsed <= MAX_HOURS_RANGE) {
+    return parsed;
+  }
+
+  console.warn(`${name} invalido (${raw}), usando ${fallback}`);
+  return fallback;
+}
+
+function getConfiguredExecutablePath() {
+  if (!PUPPETEER_EXECUTABLE_PATH) {
+    return '';
+  }
+
+  if (fs.existsSync(PUPPETEER_EXECUTABLE_PATH)) {
+    return PUPPETEER_EXECUTABLE_PATH;
+  }
+
+  console.warn(
+    `PUPPETEER_EXECUTABLE_PATH no existe (${PUPPETEER_EXECUTABLE_PATH}), usando el navegador por defecto de Puppeteer`
+  );
+  return '';
+}
+
+function sanitizePais(value, fallback = 'mexico') {
+  const normalized = stripDiacritics(String(value || ''))
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, '')
+    .replace(/[^a-z0-9_-]/g, '');
+
+  return normalized || fallback;
+}
+
+function parseHoursValue(value, fallback, name) {
+  if (value == null || value === '') {
+    return fallback;
+  }
+
+  const parsed = Number(value);
+
+  if (!Number.isInteger(parsed)) {
+    throw createHttpError(400, `El parametro "${name}" debe ser un entero`);
+  }
+
+  if (parsed < 0 || parsed > MAX_HOURS_RANGE) {
+    throw createHttpError(
+      400,
+      `El parametro "${name}" debe estar entre 0 y ${MAX_HOURS_RANGE}`
+    );
+  }
+
+  return parsed;
+}
+
+function parsePaisValue(value, fallback) {
+  if (value == null || value === '') {
+    return fallback;
+  }
+
+  const normalized = sanitizePais(value, '');
+
+  if (!normalized) {
+    throw createHttpError(400, 'El parametro "pais" es invalido');
+  }
+
+  return normalized;
+}
+
+function createHttpError(status, message) {
+  const error = new Error(message);
+  error.status = status;
+  return error;
 }
 
 function formatApiDate(date) {
@@ -74,25 +240,25 @@ function getDateRange(hoursBack = DEFAULT_HOURS_BACK, hoursAhead = DEFAULT_HOURS
 }
 
 function buildChannelId(channelName = '') {
-  return normalizeText(channelName)
+  return stripDiacritics(channelName)
     .toLowerCase()
     .replace(/\s+/g, '')
     .replace(/[^a-z0-9]/g, '');
 }
 
 function formatXmltvUtc(dateStr, gmt = 0) {
-  if (!dateStr) return '';
+  if (!dateStr) {
+    return '';
+  }
 
   const sign = gmt >= 0 ? '+' : '-';
   const abs = Math.abs(gmt).toString().padStart(2, '0');
-
   const iso = dateStr.replace(/\//g, '-').replace(' ', 'T');
   const withOffset = `${iso}${sign}${abs}:00`;
-
   const date = new Date(withOffset);
 
   if (Number.isNaN(date.getTime())) {
-    console.log('Fecha inválida:', withOffset);
+    console.log('Fecha invalida:', withOffset);
     return '';
   }
 
@@ -108,14 +274,14 @@ function formatXmltvUtc(dateStr, gmt = 0) {
 }
 
 function formatXmltvDateOnlyUtc(dateStr, gmt = 0) {
-  if (!dateStr) return '';
+  if (!dateStr) {
+    return '';
+  }
 
   const sign = gmt >= 0 ? '+' : '-';
   const abs = Math.abs(gmt).toString().padStart(2, '0');
-
   const iso = dateStr.replace(/\//g, '-').replace(' ', 'T');
   const withOffset = `${iso}${sign}${abs}:00`;
-
   const date = new Date(withOffset);
 
   if (Number.isNaN(date.getTime())) {
@@ -131,7 +297,7 @@ function formatXmltvDateOnlyUtc(dateStr, gmt = 0) {
 
 function buildXml(data) {
   if (!data || !data.response || !Array.isArray(data.response.channels)) {
-    throw new Error('JSON inválido: no existe response.channels');
+    throw new Error('JSON invalido: no existe response.channels');
   }
 
   let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
@@ -143,14 +309,17 @@ function buildXml(data) {
     const rawChannelName = channel.name || '';
     const channelName = normalizeText(rawChannelName).trim();
 
-    if (!channelName) continue;
+    if (!channelName) {
+      continue;
+    }
 
     const channelId = buildChannelId(channelName);
-    if (!channelId) continue;
 
-    if (seenChannels.has(channelId)) continue;
+    if (!channelId || seenChannels.has(channelId)) {
+      continue;
+    }
+
     seenChannels.add(channelId);
-
     xml += `  <channel id="${xmlEscape(channelId)}">\n`;
     xml += `    <display-name>${xmlEscape(channelName)}</display-name>\n`;
 
@@ -167,29 +336,32 @@ function buildXml(data) {
     const rawChannelName = channel.name || '';
     const channelName = normalizeText(rawChannelName).trim();
 
-    if (!channelName) continue;
+    if (!channelName) {
+      continue;
+    }
 
     const channelId = buildChannelId(channelName);
-    if (!channelId) continue;
+
+    if (!channelId) {
+      continue;
+    }
 
     for (const ev of channel.events || []) {
       const gmt = Number(ev.gmt || 0);
       const start = formatXmltvUtc(ev.date_begin || '', gmt);
       const stop = formatXmltvUtc(ev.date_end || '', gmt);
 
-      if (!start || !stop) continue;
-
-      const title = normalizeText((ev.name || '').trim());
-      const desc = normalizeText((ev.description || ev.name || '').trim());
-      const dateOnly = formatXmltvDateOnlyUtc(ev.date_begin || '', gmt);
+      if (!start || !stop) {
+        continue;
+      }
 
       programmes.push({
         channelId,
         start,
         stop,
-        title,
-        desc,
-        dateOnly,
+        title: normalizeText((ev.name || '').trim()),
+        desc: normalizeText((ev.description || ev.name || '').trim()),
+        dateOnly: formatXmltvDateOnlyUtc(ev.date_begin || '', gmt),
       });
     }
   }
@@ -198,19 +370,19 @@ function buildXml(data) {
     if (a.channelId !== b.channelId) {
       return a.channelId.localeCompare(b.channelId);
     }
+
     return a.start.localeCompare(b.start);
   });
 
-  for (const p of programmes) {
-    xml += `  <programme channel="${xmlEscape(p.channelId)}" start="${xmlEscape(p.start)}" stop="${xmlEscape(p.stop)}">\n`;
-    xml += `    <title>${xmlEscape(p.title)}</title>\n`;
-    xml += `    <desc>${xmlEscape(p.desc)}</desc>\n`;
-    xml += `    <date>${xmlEscape(p.dateOnly)}</date>\n`;
+  for (const programme of programmes) {
+    xml += `  <programme channel="${xmlEscape(programme.channelId)}" start="${xmlEscape(programme.start)}" stop="${xmlEscape(programme.stop)}">\n`;
+    xml += `    <title>${xmlEscape(programme.title)}</title>\n`;
+    xml += `    <desc>${xmlEscape(programme.desc)}</desc>\n`;
+    xml += `    <date>${xmlEscape(programme.dateOnly)}</date>\n`;
     xml += '  </programme>\n';
   }
 
   xml += '</tv>\n';
-
   return xml;
 }
 
@@ -218,15 +390,16 @@ function getProxyConfig() {
   if (SOCKS_PROXY_URL) {
     try {
       const parsed = new URL(SOCKS_PROXY_URL);
+
       return {
         proxyServerArg: `${parsed.protocol}//${parsed.hostname}:${parsed.port}`,
         username: decodeURIComponent(parsed.username || ''),
         password: decodeURIComponent(parsed.password || ''),
         display: `${parsed.protocol}//${parsed.hostname}:${parsed.port}`,
-        type: parsed.protocol.replace(':', '')
+        type: parsed.protocol.replace(':', ''),
       };
     } catch (err) {
-      throw new Error(`SOCKS_PROXY_URL inválido: ${err.message}`);
+      throw new Error(`SOCKS_PROXY_URL invalido: ${err.message}`);
     }
   }
 
@@ -236,7 +409,7 @@ function getProxyConfig() {
       username: PROXY_USER,
       password: PROXY_PASS,
       display: `http://${PROXY_HOST}:${PROXY_PORT}`,
-      type: 'http'
+      type: 'http',
     };
   }
 
@@ -250,19 +423,27 @@ async function launchBrowser() {
     '--disable-dev-shm-usage',
     '--disable-gpu',
     '--no-first-run',
-    '--no-zygote'
+    '--no-zygote',
   ];
 
   const proxyConfig = getProxyConfig();
+
   if (proxyConfig) {
     args.push(`--proxy-server=${proxyConfig.proxyServerArg}`);
   }
 
-  return puppeteer.launch({
+  const launchOptions = {
     headless: true,
-    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium',
     args,
-  });
+  };
+
+  const executablePath = getConfiguredExecutablePath();
+
+  if (executablePath) {
+    launchOptions.executablePath = executablePath;
+  }
+
+  return puppeteer.launch(launchOptions);
 }
 
 async function preparePage(browser) {
@@ -289,13 +470,100 @@ async function preparePage(browser) {
   return page;
 }
 
+function resolveGenerationOptions(source = {}) {
+  const pais = parsePaisValue(source.pais, DEFAULT_PAIS);
+  const hoursBack = parseHoursValue(source.hoursBack, DEFAULT_HOURS_BACK, 'hoursBack');
+  const hoursAhead = parseHoursValue(source.hoursAhead, DEFAULT_HOURS_AHEAD, 'hoursAhead');
+  const saveToDisk = source.saveToDisk !== false;
+  const cacheInfo = getCacheInfo({ pais, hoursBack, hoursAhead });
+
+  return {
+    pais,
+    hoursBack,
+    hoursAhead,
+    saveToDisk,
+    cacheInfo,
+  };
+}
+
+function getCacheInfo({ pais, hoursBack, hoursAhead }) {
+  const cacheKey = `${pais}_${hoursBack}_${hoursAhead}`;
+  const isDefault =
+    pais === DEFAULT_PAIS &&
+    hoursBack === DEFAULT_HOURS_BACK &&
+    hoursAhead === DEFAULT_HOURS_AHEAD;
+
+  return {
+    cacheKey,
+    isDefault,
+    filePath: isDefault
+      ? LEGACY_XML_PATH
+      : path.join(CACHE_DIR, `${CACHE_PREFIX}_${cacheKey}.xml`),
+  };
+}
+
+function ensureCacheDirectory(filePath) {
+  const directory = path.dirname(filePath);
+  fs.mkdirSync(directory, { recursive: true });
+}
+
+function writeXmlCache(filePath, xml) {
+  ensureCacheDirectory(filePath);
+
+  const tempPath = `${filePath}.tmp`;
+  fs.writeFileSync(tempPath, xml, 'utf8');
+  fs.renameSync(tempPath, filePath);
+}
+
+function sendXml(res, xml) {
+  res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+  res.send(xml);
+}
+
+function sendXmlError(res, error) {
+  const status = error.status || 500;
+  res
+    .status(status)
+    .type('application/xml')
+    .send(`<?xml version="1.0" encoding="UTF-8"?><error>${xmlEscape(error.message)}</error>`);
+}
+
+function sendJsonError(res, error) {
+  const status = error.status || 500;
+  res.status(status).json({
+    ok: false,
+    error: error.message,
+  });
+}
+
+function canAccessAdminRoutes(req) {
+  if (!ADMIN_TOKEN) {
+    return true;
+  }
+
+  const candidate = String(req.get('x-admin-token') || req.query.token || '').trim();
+  return candidate === ADMIN_TOKEN;
+}
+
+function requireAdminAccess(req, res) {
+  if (canAccessAdminRoutes(req)) {
+    return true;
+  }
+
+  res.status(401).json({
+    ok: false,
+    error: 'Unauthorized',
+  });
+
+  return false;
+}
+
 async function fetchClaroVideoJsonWithPuppeteer({
   pais = DEFAULT_PAIS,
   hoursBack = DEFAULT_HOURS_BACK,
-  hoursAhead = DEFAULT_HOURS_AHEAD
+  hoursAhead = DEFAULT_HOURS_AHEAD,
 } = {}) {
   const { date_from, date_to } = getDateRange(hoursBack, hoursAhead);
-
   const params = new URLSearchParams({
     device_id: 'web',
     device_category: 'web',
@@ -339,8 +607,8 @@ async function fetchClaroVideoJsonWithPuppeteer({
         method: 'GET',
         credentials: 'include',
         headers: {
-          Accept: 'application/json, text/plain, */*'
-        }
+          Accept: 'application/json, text/plain, */*',
+        },
       });
 
       const text = await res.text();
@@ -348,7 +616,7 @@ async function fetchClaroVideoJsonWithPuppeteer({
       return {
         ok: res.ok,
         status: res.status,
-        text
+        text,
       };
     }, apiUrl);
 
@@ -359,7 +627,7 @@ async function fetchClaroVideoJsonWithPuppeteer({
     try {
       return JSON.parse(result.text);
     } catch {
-      throw new Error('La respuesta no es JSON válido');
+      throw new Error('La respuesta no es JSON valido');
     }
   } finally {
     await browser.close();
@@ -371,7 +639,6 @@ async function getBrowserIp() {
 
   try {
     const page = await preparePage(browser);
-
     const response = await page.goto('https://api.ipify.org?format=json', {
       waitUntil: 'networkidle2',
       timeout: 30000,
@@ -381,64 +648,105 @@ async function getBrowserIp() {
       throw new Error('No hubo respuesta consultando IP');
     }
 
-    const text = await response.text();
-    return JSON.parse(text);
+    return JSON.parse(await response.text());
   } finally {
     await browser.close();
   }
 }
 
-async function generateEpg({
-  pais = DEFAULT_PAIS,
-  hoursBack = DEFAULT_HOURS_BACK,
-  hoursAhead = DEFAULT_HOURS_AHEAD,
-  saveToDisk = true
-} = {}) {
-  if (isRunning) {
-    throw new Error('Ya hay una generación en progreso');
+function buildGenerationSummary(request, xml) {
+  return {
+    xml,
+    bytes: Buffer.byteLength(xml, 'utf8'),
+    cacheKey: request.cacheInfo.cacheKey,
+    cachePath: request.cacheInfo.filePath,
+    isDefaultCache: request.cacheInfo.isDefault,
+    params: {
+      pais: request.pais,
+      hoursBack: request.hoursBack,
+      hoursAhead: request.hoursAhead,
+    },
+  };
+}
+
+function generateEpg(source = {}) {
+  const request = resolveGenerationOptions(source);
+  const existing = pendingGenerations.get(request.cacheInfo.cacheKey);
+
+  if (existing) {
+    return existing;
   }
 
-  isRunning = true;
-  lastRunAt = new Date().toISOString();
-  lastError = null;
+  const promise = generationQueue.catch(() => null).then(async () => {
+    isRunning = true;
+    lastRunAt = new Date().toISOString();
+    lastError = null;
+    activeGeneration = {
+      cacheKey: request.cacheInfo.cacheKey,
+      filePath: request.cacheInfo.filePath,
+      pais: request.pais,
+      hoursBack: request.hoursBack,
+      hoursAhead: request.hoursAhead,
+    };
 
-  try {
-    const data = await fetchClaroVideoJsonWithPuppeteer({ pais, hoursBack, hoursAhead });
-    const xml = buildXml(data);
+    const startedAt = Date.now();
 
-    if (saveToDisk) {
-      fs.writeFileSync(XML_PATH, xml, 'utf8');
+    try {
+      const data = await fetchClaroVideoJsonWithPuppeteer(request);
+      const xml = buildXml(data);
+
+      if (request.saveToDisk) {
+        writeXmlCache(request.cacheInfo.filePath, xml);
+      }
+
+      lastSuccessAt = new Date().toISOString();
+      lastDurationMs = Date.now() - startedAt;
+
+      return buildGenerationSummary(request, xml);
+    } catch (err) {
+      lastError = err.message;
+      lastDurationMs = Date.now() - startedAt;
+      throw err;
+    } finally {
+      isRunning = false;
+      activeGeneration = null;
     }
+  });
 
-    lastSuccessAt = new Date().toISOString();
-    return xml;
-  } catch (err) {
-    lastError = err.message;
-    throw err;
-  } finally {
-    isRunning = false;
-  }
+  pendingGenerations.set(request.cacheInfo.cacheKey, promise);
+  generationQueue = promise.catch(() => null);
+
+  return promise.finally(() => {
+    if (pendingGenerations.get(request.cacheInfo.cacheKey) === promise) {
+      pendingGenerations.delete(request.cacheInfo.cacheKey);
+    }
+  });
+}
+
+function defaultGenerationOptions() {
+  return {
+    pais: DEFAULT_PAIS,
+    hoursBack: DEFAULT_HOURS_BACK,
+    hoursAhead: DEFAULT_HOURS_AHEAD,
+  };
+}
+
+function parseRequestOptions(req) {
+  return resolveGenerationOptions({
+    pais: req.query.pais,
+    hoursBack: req.query.hoursBack,
+    hoursAhead: req.query.hoursAhead,
+    saveToDisk: true,
+  });
 }
 
 function startCronJob() {
   console.log('CRON iniciado (cada 6 horas)');
 
   async function run() {
-    if (isRunning) {
-      console.log('Cron omitido: ya hay una ejecución en progreso');
-      return;
-    }
-
     try {
       console.log('Generando EPG...', new Date().toISOString());
-
-      await generateEpg({
-        pais: DEFAULT_PAIS,
-        hoursBack: DEFAULT_HOURS_BACK,
-        hoursAhead: DEFAULT_HOURS_AHEAD,
-        saveToDisk: true
-      });
-
+      await generateEpg(defaultGenerationOptions());
       console.log('EPG actualizado correctamente');
     } catch (err) {
       console.error('Error en CRON:', err.message);
@@ -451,80 +759,80 @@ function startCronJob() {
 
 app.get('/epg.xml', async (req, res) => {
   try {
-    const fileExists = fs.existsSync(XML_PATH);
+    const request = parseRequestOptions(req);
+    const fileExists = fs.existsSync(request.cacheInfo.filePath);
 
-    if (!fileExists) {
-      console.log('No existe cache XML, generando en caliente...');
-
-      const xml = await generateEpg({
-        pais: req.query.pais || DEFAULT_PAIS,
-        hoursBack: Number(req.query.hoursBack || DEFAULT_HOURS_BACK),
-        hoursAhead: Number(req.query.hoursAhead || DEFAULT_HOURS_AHEAD),
-        saveToDisk: true
-      });
-
+    if (fileExists) {
       res.setHeader('Content-Type', 'application/xml; charset=utf-8');
-      return res.send(xml);
+      return res.sendFile(request.cacheInfo.filePath, (err) => {
+        if (err && !res.headersSent) {
+          sendXmlError(res, new Error('No se pudo enviar el archivo XML'));
+        }
+      });
     }
 
-    res.setHeader('Content-Type', 'application/xml; charset=utf-8');
-    return res.sendFile(XML_PATH, (err) => {
-      if (err) {
-        res
-          .status(500)
-          .type('application/xml')
-          .send('<?xml version="1.0" encoding="UTF-8"?><error>No se pudo enviar el archivo XML</error>');
-      }
-    });
+    console.log(`No existe cache XML para ${request.cacheInfo.cacheKey}, generando...`);
+    const result = await generateEpg(request);
+    return sendXml(res, result.xml);
   } catch (error) {
-    res
-      .status(500)
-      .type('application/xml')
-      .send(`<?xml version="1.0" encoding="UTF-8"?><error>${xmlEscape(error.message)}</error>`);
+    return sendXmlError(res, error);
   }
 });
 
 app.get('/refresh', async (req, res) => {
+  if (!requireAdminAccess(req, res)) {
+    return;
+  }
+
   try {
-    const xml = await generateEpg({
-      pais: req.query.pais || DEFAULT_PAIS,
-      hoursBack: Number(req.query.hoursBack || DEFAULT_HOURS_BACK),
-      hoursAhead: Number(req.query.hoursAhead || DEFAULT_HOURS_AHEAD),
-      saveToDisk: true
-    });
+    const request = parseRequestOptions(req);
+    const result = await generateEpg(request);
 
     res.json({
       ok: true,
       message: 'EPG regenerado correctamente',
-      bytes: Buffer.byteLength(xml, 'utf8'),
-      lastSuccessAt
+      bytes: result.bytes,
+      cacheKey: result.cacheKey,
+      cachePath: path.relative(__dirname, result.cachePath) || path.basename(result.cachePath),
+      lastSuccessAt,
+      params: result.params,
     });
   } catch (error) {
-    res.status(500).json({
-      ok: false,
-      error: error.message
-    });
+    sendJsonError(res, error);
   }
 });
 
 app.get('/health', (req, res) => {
   const proxyConfig = getProxyConfig();
+  const defaultCache = getCacheInfo(defaultGenerationOptions());
+  const cacheExists = fs.existsSync(defaultCache.filePath);
+  const ok = cacheExists || Boolean(lastSuccessAt);
 
-  res.status(200).json({
-    ok: true,
+  res.status(ok ? 200 : 503).json({
+    ok,
     isRunning,
     lastRunAt,
     lastSuccessAt,
     lastError,
-    cacheExists: fs.existsSync(XML_PATH),
+    lastDurationMs,
+    cacheExists,
+    defaultCachePath: path.relative(__dirname, defaultCache.filePath) || path.basename(defaultCache.filePath),
+    pendingGenerations: pendingGenerations.size,
+    activeGeneration,
+    defaults: defaultGenerationOptions(),
     proxyEnabled: Boolean(proxyConfig),
     proxyType: proxyConfig?.type || null,
     proxyDisplay: proxyConfig?.display || null,
-    proxyAuthEnabled: Boolean(proxyConfig?.username && proxyConfig?.password)
+    proxyAuthEnabled: Boolean(proxyConfig?.username && proxyConfig?.password),
+    adminProtectionEnabled: Boolean(ADMIN_TOKEN),
   });
 });
 
 app.get('/debug-ip', async (req, res) => {
+  if (!requireAdminAccess(req, res)) {
+    return;
+  }
+
   try {
     const ip = await getBrowserIp();
     const proxyConfig = getProxyConfig();
@@ -535,17 +843,33 @@ app.get('/debug-ip', async (req, res) => {
       proxyType: proxyConfig?.type || null,
       proxyDisplay: proxyConfig?.display || null,
       proxyAuthEnabled: Boolean(proxyConfig?.username && proxyConfig?.password),
-      ip
+      ip,
     });
   } catch (error) {
-    res.status(500).json({
-      ok: false,
-      error: error.message
-    });
+    sendJsonError(res, error);
   }
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Servidor en http://0.0.0.0:${PORT}/epg.xml`);
-  startCronJob();
-});
+function startServer() {
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Servidor en http://0.0.0.0:${PORT}/epg.xml`);
+    startCronJob();
+  });
+}
+
+if (require.main === module) {
+  startServer();
+}
+
+module.exports = {
+  app,
+  buildXml,
+  defaultGenerationOptions,
+  formatXmltvDateOnlyUtc,
+  formatXmltvUtc,
+  getCacheInfo,
+  getDateRange,
+  normalizeText,
+  resolveGenerationOptions,
+  startServer,
+};

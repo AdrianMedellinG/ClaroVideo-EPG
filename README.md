@@ -2,39 +2,20 @@
 
 Generador de EPG en formato XMLTV usando **Node.js + Express + Puppeteer**.
 
-- Obtiene la programación desde ClaroVideo con un navegador real (Puppeteer)
-- Convierte horarios a **GMT / UTC**
-- Genera y guarda un archivo XMLTV en disco
-- Expone el XML como endpoint HTTP
-- Actualiza automáticamente cada **6 horas**
-
----
+- Obtiene la programacion desde ClaroVideo con un navegador real
+- Convierte horarios a UTC para salida XMLTV
+- Guarda cache XML por combinacion de parametros
+- Expone endpoints HTTP para lectura, refresco y diagnostico
+- Actualiza automaticamente el cache por defecto cada 6 horas
 
 ## Requisitos
 
 - Node.js 18+
 - npm
-- Chromium instalado en el sistema
 - Acceso a internet desde el servidor
+- Chromium o Chrome instalado si no quieres usar el navegador por defecto de Puppeteer
 
----
-
-## Estructura
-
-```
-clarovideoepg/
-├── server.js
-├── package.json
-├── package-lock.json
-├── Dockerfile
-├── .dockerignore
-├── .env
-└── README.md
-```
-
----
-
-## Instalación local
+## Instalacion local
 
 ```bash
 git clone https://github.com/tu-usuario/clarovideoepg.git
@@ -50,8 +31,11 @@ PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 DEFAULT_PAIS=mexico
 HOURS_BACK=3
 HOURS_AHEAD=12
+ADMIN_TOKEN=
 TZ=America/Monterrey
 ```
+
+`server.js` carga `.env` automaticamente al iniciar. Si `PUPPETEER_EXECUTABLE_PATH` esta definido pero no existe en el sistema actual, el servicio intenta usar el navegador por defecto de Puppeteer.
 
 Ejecutar:
 
@@ -59,50 +43,54 @@ Ejecutar:
 npm start
 ```
 
----
-
 ## Endpoints
 
-| Endpoint | Descripción |
+| Endpoint | Descripcion |
 |---|---|
-| `/epg.xml` | Devuelve el XMLTV generado |
-| `/refresh` | Fuerza la regeneración del XML |
+| `/epg.xml` | Devuelve XMLTV desde cache; si no existe, lo genera |
+| `/refresh` | Fuerza regeneracion del XML para la combinacion solicitada |
 | `/health` | Estado del servicio |
+| `/debug-ip` | Devuelve la IP vista por Puppeteer |
 
-### `/refresh` — parámetros opcionales
+### Parametros opcionales para `/epg.xml` y `/refresh`
 
-```
+```text
+/epg.xml?pais=mexico&hoursBack=3&hoursAhead=12
 /refresh?pais=mexico&hoursBack=3&hoursAhead=12
 ```
 
-| Parámetro | Descripción |
+| Parametro | Descripcion |
 |---|---|
-| `pais` | Región de ClaroVideo (default: `mexico`) |
-| `hoursBack` | Horas hacia atrás desde ahora |
+| `pais` | Region de ClaroVideo (default: `mexico`) |
+| `hoursBack` | Horas hacia atras desde ahora |
 | `hoursAhead` | Horas hacia adelante desde ahora |
 
----
+El cache se guarda por combinacion de `pais`, `hoursBack` y `hoursAhead`. El cache por defecto sigue viviendo en `clarovideo_epg.xml`.
+
+Si defines `ADMIN_TOKEN`, los endpoints `/refresh` y `/debug-ip` requieren `x-admin-token: <token>` o `?token=<token>`.
 
 ## Variables de entorno
 
-| Variable | Descripción | Default sugerido |
+| Variable | Descripcion | Default sugerido |
 |---|---|---|
 | `PORT` | Puerto del servidor | `3000` |
-| `PUPPETEER_EXECUTABLE_PATH` | Ruta de Chromium | `/usr/bin/chromium` |
-| `DEFAULT_PAIS` | País o región | `mexico` |
-| `HOURS_BACK` | Horas hacia atrás | `3` |
+| `PUPPETEER_EXECUTABLE_PATH` | Ruta explicita de Chromium o Chrome | vacio |
+| `DEFAULT_PAIS` | Pais o region | `mexico` |
+| `HOURS_BACK` | Horas hacia atras | `3` |
 | `HOURS_AHEAD` | Horas hacia adelante | `12` |
-| `TZ` | Zona horaria | `America/Monterrey` |
-
----
+| `ADMIN_TOKEN` | Protege `/refresh` y `/debug-ip` cuando esta definido | vacio |
+| `SOCKS_PROXY_URL` | Proxy SOCKS completo, por ejemplo `socks5://user:pass@host:port` | vacio |
+| `PROXY_HOST` | Host de proxy HTTP | vacio |
+| `PROXY_PORT` | Puerto de proxy HTTP | vacio |
+| `PROXY_USER` | Usuario de proxy HTTP | vacio |
+| `PROXY_PASS` | Password de proxy HTTP | vacio |
+| `TZ` | Zona horaria del contenedor o servidor | `America/Monterrey` |
 
 ## Docker
 
 ```bash
-# Build
 docker build -t clarovideo-epg .
 
-# Run
 docker run -d \
   --name clarovideo-epg \
   -p 3000:3000 \
@@ -115,27 +103,24 @@ docker run -d \
   clarovideo-epg
 ```
 
----
+## Deploy
 
-## Deploy en Dokploy
-
-1. Sube el proyecto a GitHub (incluye `Dockerfile`)
-2. Crea una app en Dokploy y conecta el repo
-3. Usa `Dockerfile` como método de build, puerto `3000`
-4. Agrega las variables de entorno del bloque anterior
-5. Usa `/health` como healthcheck
-
----
+1. Sube el proyecto a GitHub.
+2. Conecta el repositorio en tu plataforma de despliegue.
+3. Usa el `Dockerfile` del proyecto.
+4. Configura las variables de entorno necesarias.
+5. Usa `/health` como healthcheck.
 
 ## Troubleshooting
 
-**Chromium no inicia** — verifica que `PUPPETEER_EXECUTABLE_PATH` apunte a la ruta correcta y que Chromium esté instalado.
+**Chromium no inicia**  
+Verifica que `PUPPETEER_EXECUTABLE_PATH` apunte a una ruta valida. Si lo dejas vacio, Puppeteer intentara usar su navegador por defecto.
 
-**`/epg.xml` sin caché** — el cron puede no haber terminado aún o falló. Revisa `/health` y los logs.
+**`/epg.xml` sin cache**  
+El cron puede no haber terminado aun o pudo fallar la ultima generacion. Revisa `/health` y los logs.
 
-**Error de red a ClaroVideo** — se usa Puppeteer precisamente para evitar bloqueos de API. Revisa conectividad del servidor.
-
----
+**Error de red a ClaroVideo**  
+Revisa conectividad del servidor, proxy configurado y acceso saliente del navegador.
 
 ## Licencia
 

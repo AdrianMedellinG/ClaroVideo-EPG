@@ -1,0 +1,13 @@
+{
+  "name": "clarovideo-epg",
+  "version": "1.0.0",
+  "description": "EPG XMLTV generator using Node.js, Express and Puppeteer",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "puppeteer": "^24.40.0"
+  }
+}

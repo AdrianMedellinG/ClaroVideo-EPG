@@ -211,6 +211,7 @@ async function fetchClaroVideoJsonWithPuppeteer({
   hoursBack = DEFAULT_HOURS_BACK,
   hoursAhead = DEFAULT_HOURS_AHEAD
 } = {}) {
+
   const { date_from, date_to } = getDateRange(hoursBack, hoursAhead);
 
   const params = new URLSearchParams({
@@ -242,9 +243,7 @@ async function fetchClaroVideoJsonWithPuppeteer({
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-dev-shm-usage',
-      '--disable-gpu',
-      '--no-first-run',
-      '--no-zygote'
+      '--disable-gpu'
     ],
   });
 
@@ -255,33 +254,40 @@ async function fetchClaroVideoJsonWithPuppeteer({
       'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Mobile Safari/537.36'
     );
 
-    await page.setExtraHTTPHeaders({
-      Accept: 'application/json, text/plain, */*',
-      Origin: 'https://www.clarovideo.com',
-      Referer: 'https://www.clarovideo.com/',
-    });
-
-    const response = await page.goto(apiUrl, {
+    // 🔥 PASO 1: entrar al sitio (esto genera cookies reales)
+    await page.goto('https://www.clarovideo.com/', {
       waitUntil: 'networkidle2',
       timeout: 60000,
     });
 
-    if (!response) {
-      throw new Error('No hubo respuesta al consultar la API');
+    // 🔥 PASO 2: esperar a que cargue JS / cookies
+    await new Promise(r => setTimeout(r, 3000));
+
+    // 🔥 PASO 3: hacer fetch desde el navegador (con cookies activas)
+    const result = await page.evaluate(async (url) => {
+      const res = await fetch(url, {
+        method: 'GET',
+        credentials: 'include', // 🔥 CLAVE
+        headers: {
+          'Accept': 'application/json, text/plain, */*'
+        }
+      });
+
+      const text = await res.text();
+
+      return {
+        ok: res.ok,
+        status: res.status,
+        text
+      };
+    }, apiUrl);
+
+    if (!result.ok) {
+      throw new Error(`HTTP ${result.status}: ${result.text.slice(0, 300)}`);
     }
 
-    const status = response.status();
-    const text = await response.text();
+    return JSON.parse(result.text);
 
-    if (status < 200 || status >= 300) {
-      throw new Error(`HTTP ${status}: ${text.slice(0, 500)}`);
-    }
-
-    try {
-      return JSON.parse(text);
-    } catch (err) {
-      throw new Error(`La respuesta no es JSON válido: ${text.slice(0, 300)}`);
-    }
   } finally {
     await browser.close();
   }

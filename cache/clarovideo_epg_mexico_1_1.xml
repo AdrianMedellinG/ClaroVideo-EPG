@@ -1,0 +1,785 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tv generator-info-name="ClaroVideo Puppeteer GMT">
+  <channel id="unotv">
+    <display-name>UNO TV</display-name>
+    <icon src="https://clarovideocdn5.clarovideo.net/PELICULAS/UNOTV/EXPORTACION_WEB/SS/UNOTV_t-290x163.png"/>
+  </channel>
+  <channel id="canaliberoamericano">
+    <display-name>CANAL IBEROAMERICANO</display-name>
+    <icon src="https://clarovideocdn3.clarovideo.net/PELICULAS/CANALIBEROAMERICANO/EXPORTACION_WEB/SS/CANALIBEROAMERICANO_t-290x163.png"/>
+  </channel>
+  <channel id="clarosports">
+    <display-name>CLARO SPORTS</display-name>
+    <icon src="https://clarovideocdn7.clarovideo.net/PELICULAS/CLAROSPORTS/EXPORTACION_WEB/SS/CLAROSPORTS_t-290x163.png"/>
+  </channel>
+  <channel id="clarosportsuefa">
+    <display-name>CLARO SPORTS UEFA</display-name>
+    <icon src="https://clarovideocdn5.clarovideo.net/PELICULAS/CLAROSPORTSUEFA/EXPORTACION_WEB/SS/CLAROSPORTSUEFA_t-290x163.png"/>
+  </channel>
+  <channel id="plimplim">
+    <display-name>PLIM PLIM</display-name>
+    <icon src="https://clarovideocdn1.clarovideo.net/PELICULAS/PLIMPLIM/EXPORTACION_WEB/SS/PLIMPLIM_t-290x163.png"/>
+  </channel>
+  <channel id="canalclaro">
+    <display-name>CANAL CLARO</display-name>
+    <icon src="https://clarovideocdn5.clarovideo.net/PELICULAS/CANALCLARO/EXPORTACION_WEB/SS/CANALCLARO_t-290x163.png"/>
+  </channel>
+  <channel id="clarocinema">
+    <display-name>CLARO CINEMA</display-name>
+    <icon src="https://clarovideocdn7.clarovideo.net/PELICULAS/CLAROCINEMA/EXPORTACION_WEB/SS/CLAROCINEMA_t-290x163.png"/>
+  </channel>
+  <channel id="concertchannel">
+    <display-name>CONCERT CHANNEL</display-name>
+    <icon src="https://clarovideocdn3.clarovideo.net/PELICULAS/CONCERTCHANNEL/EXPORTACION_WEB/SS/CONCERTCHANNEL_t-290x163.png"/>
+  </channel>
+  <channel id="foxsportspremiummexico">
+    <display-name>FOX SPORTS PREMIUM MÉXICO</display-name>
+    <icon src="https://clarovideocdn3.clarovideo.net/FOXV3/PELICULAS/FOXSPORTSPREMIUMMXICO/EXPORTACION_WEB/SS/FOXSPORTSPREMIUMMXICO_t-290x163.png"/>
+  </channel>
+  <channel id="foxsports">
+    <display-name>FOX SPORTS</display-name>
+    <icon src="https://clarovideocdn9.clarovideo.net/FOXV3/PELICULAS/FOXSPORTS/EXPORTACION_WEB/SS/FOXSPORTS_t-290x163.png"/>
+  </channel>
+  <channel id="foxsports2">
+    <display-name>FOX SPORTS 2</display-name>
+    <icon src="https://clarovideocdn1.clarovideo.net/FOXV3/PELICULAS/FOXSPORTS2/EXPORTACION_WEB/SS/FOXSPORTS2_t-290x163.png"/>
+  </channel>
+  <channel id="foxsports3">
+    <display-name>FOX SPORTS 3</display-name>
+    <icon src="https://clarovideocdn1.clarovideo.net/FOXV3/PELICULAS/FOXSPORTS3/EXPORTACION_WEB/SS/FOXSPORTS3_t-290x163.png"/>
+  </channel>
+  <channel id="hbochannel">
+    <display-name>HBO CHANNEL</display-name>
+    <icon src="https://clarovideocdn9.clarovideo.net/HBO/PELICULAS/HBOCHANNEL/EXPORTACION_WEB/SS/HBOCHANNEL_t-290x163.png"/>
+  </channel>
+  <channel id="hbo2channel">
+    <display-name>HBO 2 CHANNEL</display-name>
+    <icon src="https://clarovideocdn1.clarovideo.net/HBO/PELICULAS/HBO2CHANNEL/EXPORTACION_WEB/SS/HBO2CHANNEL_t-290x163.png"/>
+  </channel>
+  <channel id="hbopluschannel">
+    <display-name>HBO PLUS CHANNEL</display-name>
+    <icon src="https://clarovideocdn7.clarovideo.net/HBO/PELICULAS/HBOPLUSCHANNEL/EXPORTACION_WEB/SS/HBOPLUSCHANNEL_t-290x163.png"/>
+  </channel>
+  <channel id="hbofamilychannel">
+    <display-name>HBO FAMILY CHANNEL</display-name>
+    <icon src="https://clarovideocdn1.clarovideo.net/HBO/PELICULAS/HBOFAMILYCHANNEL/EXPORTACION_WEB/SS/HBOFAMILYCHANNEL_t-290x163.png"/>
+  </channel>
+  <channel id="hbosignaturenew">
+    <display-name>HBO SIGNATURE NEW</display-name>
+    <icon src="https://clarovideocdn9.clarovideo.net/HBO/PELICULAS/HBOSIGNATURENEW/EXPORTACION_WEB/SS/HBOSIGNATURENEW_t-290x163.png"/>
+  </channel>
+  <channel id="hbomundi">
+    <display-name>HBO MUNDI</display-name>
+    <icon src="https://clarovideocdn5.clarovideo.net/HBO/PELICULAS/HBOMUNDI/EXPORTACION_WEB/SS/HBOMUNDI_t-290x163.png"/>
+  </channel>
+  <channel id="hbopopchannel">
+    <display-name>HBO POP CHANNEL</display-name>
+    <icon src="https://clarovideocdn5.clarovideo.net/HBO/PELICULAS/HBOPOPCHANNEL/EXPORTACION_WEB/SS/HBOPOPCHANNEL_t-290x163.png"/>
+  </channel>
+  <channel id="hboxtreme">
+    <display-name>HBO XTREME</display-name>
+    <icon src="https://clarovideocdn7.clarovideo.net/HBO/PELICULAS/HBOXTREME/EXPORTACION_WEB/SS/HBOXTREME_t-290x163.png"/>
+  </channel>
+  <channel id="antena3internacionalhd">
+    <display-name>ANTENA 3 INTERNACIONAL HD</display-name>
+    <icon src="https://clarovideocdn1.clarovideo.net/ATRESPLAYER/PELICULAS/ANTENA3INTERNACIONALHD/EXPORTACION_WEB/SS/ANTENA3INTERNACIONALHD_t-290x163.png"/>
+  </channel>
+  <channel id="holatvhd">
+    <display-name>HOLA TV HD</display-name>
+    <icon src="https://clarovideocdn3.clarovideo.net/ATRESPLAYER/PELICULAS/HOLATVHD/EXPORTACION_WEB/SS/HOLATVHD_t-290x163.png"/>
+  </channel>
+  <channel id="atresserieshd">
+    <display-name>ATRES SERIES HD</display-name>
+    <icon src="https://clarovideocdn3.clarovideo.net/ATRESPLAYER/PELICULAS/ATRESSERIESHD/EXPORTACION_WEB/SS/ATRESSERIESHD_t-290x163.png"/>
+  </channel>
+  <channel id="atrescinehd">
+    <display-name>ATRESCINE HD</display-name>
+    <icon src="https://clarovideocdn9.clarovideo.net/ATRESPLAYER/PELICULAS/ATRESCINEHD/EXPORTACION_WEB/SS/ATRESCINEHD_t-290x163.png"/>
+  </channel>
+  <channel id="tve">
+    <display-name>TVE</display-name>
+    <icon src="https://clarovideocdn6.clarovideo.net/RTVE/PELICULAS/TVE/EXPORTACION_WEB/SS/TVE_t-290x163.png"/>
+  </channel>
+  <channel id="startve">
+    <display-name>STAR TVE</display-name>
+    <icon src="https://clarovideocdn4.clarovideo.net/RTVE/PELICULAS/STARTVE/EXPORTACION_WEB/SS/STARTVE_t-290x163.png"/>
+  </channel>
+  <channel id="clan">
+    <display-name>CLAN</display-name>
+    <icon src="https://clarovideocdn8.clarovideo.net/RTVE/PELICULAS/CLAN/EXPORTACION_WEB/SS/CLAN_t-290x163.png"/>
+  </channel>
+  <channel id="24h">
+    <display-name>24H</display-name>
+    <icon src="https://clarovideocdn6.clarovideo.net/RTVE/PELICULAS/24H/EXPORTACION_WEB/SS/24H_t-290x163.png"/>
+  </channel>
+  <channel id="edye">
+    <display-name>EDYE</display-name>
+    <icon src="https://clarovideocdn8.clarovideo.net/EDYE/PELICULAS/EDYE/EXPORTACION_WEB/SS/EDYE_t-290x163.png"/>
+  </channel>
+  <channel id="universalrealityhd">
+    <display-name>UNIVERSAL REALITY HD</display-name>
+    <icon src="https://clarovideocdn1.clarovideo.net/UNIVERSAL/PELICULAS/UNIVERSALREALITYHD/EXPORTACION_WEB/SS/UNIVERSALREALITYHD_t-290x163.png"/>
+  </channel>
+  <channel id="universalcomedyhd">
+    <display-name>UNIVERSAL COMEDY HD</display-name>
+    <icon src="https://clarovideocdn9.clarovideo.net/UNIVERSAL/PELICULAS/UNIVERSALCOMEDYHD/EXPORTACION_WEB/SS/UNIVERSALCOMEDYHD_t-290x163.png"/>
+  </channel>
+  <channel id="universalcrimehd">
+    <display-name>UNIVERSAL CRIME HD</display-name>
+    <icon src="https://clarovideocdn7.clarovideo.net/UNIVERSAL/PELICULAS/UNIVERSALCRIMEHD/EXPORTACION_WEB/SS/UNIVERSALCRIMEHD_t-290x163.png"/>
+  </channel>
+  <channel id="universalcinemahd">
+    <display-name>UNIVERSAL CINEMA HD</display-name>
+    <icon src="https://clarovideocdn9.clarovideo.net/UNIVERSAL/PELICULAS/UNIVERSALCINEMAHD/EXPORTACION_WEB/SS/UNIVERSALCINEMAHD_t-290x163.png"/>
+  </channel>
+  <channel id="universalpremierehd">
+    <display-name>UNIVERSAL PREMIERE HD</display-name>
+    <icon src="https://clarovideocdn3.clarovideo.net/UNIVERSAL/PELICULAS/UNIVERSALPREMIEREHD/EXPORTACION_WEB/SS/UNIVERSALPREMIEREHD_t-290x163.png"/>
+  </channel>
+  <channel id="fox">
+    <display-name>FOX</display-name>
+    <icon src="https://clarovideocdn8.clarovideo.net/FOXONE/PELICULAS/FOX/EXPORTACION_WEB/SS/FOX_t-290x163.png"/>
+  </channel>
+  <channel id="foxone1">
+    <display-name>FOX ONE 1</display-name>
+    <icon src="https://clarovideocdn6.clarovideo.net/FOXONE/PELICULAS/FOXONE1/EXPORTACION_WEB/SS/FOXONE1_t-290x163.png"/>
+  </channel>
+  <channel id="foxone2">
+    <display-name>FOX ONE 2</display-name>
+    <icon src="https://clarovideocdn6.clarovideo.net/FOXONE/PELICULAS/FOXONE2/EXPORTACION_WEB/SS/FOXONE2_t-290x163.png"/>
+  </channel>
+  <channel id="foxone3">
+    <display-name>FOX ONE 3</display-name>
+    <icon src="https://clarovideocdn6.clarovideo.net/FOXONE/PELICULAS/FOXONE3/EXPORTACION_WEB/SS/FOXONE3_t-290x163.png"/>
+  </channel>
+  <channel id="foxone4">
+    <display-name>FOX ONE 4</display-name>
+    <icon src="https://clarovideocdn6.clarovideo.net/FOXONE/PELICULAS/FOXONE4/EXPORTACION_WEB/SS/FOXONE4_t-290x163.png"/>
+  </channel>
+  <channel id="foxone5">
+    <display-name>FOX ONE 5</display-name>
+    <icon src="https://clarovideocdn6.clarovideo.net/FOXONE/PELICULAS/FOXONE5/EXPORTACION_WEB/SS/FOXONE5_t-290x163.png"/>
+  </channel>
+  <channel id="foxone6">
+    <display-name>FOX ONE 6</display-name>
+    <icon src="https://clarovideocdn6.clarovideo.net/FOXONE/PELICULAS/FOXONE6/EXPORTACION_WEB/SS/FOXONE6_t-290x163.png"/>
+  </channel>
+  <channel id="foxone7">
+    <display-name>FOX ONE 7</display-name>
+    <icon src="https://clarovideocdn6.clarovideo.net/FOXONE/PELICULAS/FOXONE7/EXPORTACION_WEB/SS/FOXONE7_t-290x163.png"/>
+  </channel>
+  <channel id="foxone8">
+    <display-name>FOX ONE 8</display-name>
+    <icon src="https://clarovideocdn6.clarovideo.net/FOXONE/PELICULAS/FOXONE8/EXPORTACION_WEB/SS/FOXONE8_t-290x163.png"/>
+  </channel>
+  <programme channel="24h" start="20260319160000 +0000" stop="20260319190000 +0000">
+    <title>La Tarde En 24h</title>
+    <desc>Informativo en directo de noticias entrevistas y reportajes con dedicación especial a la economía, internacional, cultura y deporte.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="antena3internacionalhd" start="20260319143400 +0000" stop="20260319183700 +0000">
+    <title>Espejo Público</title>
+    <desc>Reportajes sobre temas variados que atañen a diferentes clases sociales, noticias de interés público que están haciendo parte de los titulares en los medios de comunicación, las mejores entrevistas políticas, son una parte de este magazín informativo que ha estado vigente por más de una década.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="atrescinehd" start="20260319154000 +0000" stop="20260319171000 +0000">
+    <title>Los Ladrones Somos Gente Honrada</title>
+    <desc>Los adinerados señores de Arévalo van a celebrar una fiesta en su casa. Este acontecimiento llega a oidos de una banda de ladrones que van a aprovechar la ocasión para preparar un buen golpe. Todo ha sido minuciosamente planeado y no puede fallar. Pero sucede algo imprevisto. El jefe de la banda se enamora de la hija de los dueños y suspende el golpe.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="atrescinehd" start="20260319171000 +0000" stop="20260319184000 +0000">
+    <title>Esta Que Lo Es...</title>
+    <desc>Lina, que trabaja de sirvienta, está ahorrando con su novio Daniel, que es bombero, para poder casarse. Pero el día de la boda, el novio prefiere ir a apagar un incendio y la deja plantada en la puerta de la iglesia. La chica decide entonces marcharse para ver a su padre, que trabaja en un circo. Haciendo autostop la recoge Carlos, un hombre que acaba de atracar un banco.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="atresserieshd" start="20260319133000 +0000" stop="20260319174200 +0000">
+    <title>Pop Up Aquí No Hay Quién Viva</title>
+    <desc>Espacio en el que, gracias a bocadillos de los personajes de la ficción, el espectador puede obtener información adicional de la serie &apos;Aquí no hay quien viva&apos;.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="atresserieshd" start="20260319174200 +0000" stop="20260319183300 +0000">
+    <title>Rock Story</title>
+    <desc>Rock Story cuenta la historia de Gui Santiago, un exastro del rock cuya vida gira en torno a la música y los errores del pasado. Tras perder su carrera y a su familia, enfrenta traiciones, descubre a un hijo adolescente al que nunca conoció y encuentra en Julia, una profesora de ballet en apuros, la oportunidad de redimirse y abrir su corazón. Con la creación de la banda 4.4, Gui ve una nueva oportunidad de regresar al estrellato, enfrentando a su rival Leo Regis y lidiando con las sombras de su pasado. Una historia de amores, traiciones y segundas oportunidades.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="canalclaro" start="20260319160000 +0000" stop="20260319173000 +0000">
+    <title>Don Mateo</title>
+    <desc>T7 -Ep.11. Terence Hill interpreta a Don Matteo, quien continúa resolviendo crímenes en Gubbio, Italia, usando su intuición, humor y una mezcla de misterio y comedia.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="canalclaro" start="20260319173000 +0000" stop="20260319190000 +0000">
+    <title>El Cuento De Nokdu</title>
+    <desc>T1 -Ep.4. Durante el periodo Joseon, un hombre llamado Jeon Nok-du se disfraza de mujer para huir a un pueblo de viudas. Allí conoce a Dong Dong-ju, un aprendiz de kisaeng a quien le gustan más las manualidades que cantar o bailar.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="canaliberoamericano" start="20260319130000 +0000" stop="20260319200000 +0000">
+    <title>Verano Divertido</title>
+    <desc>Verano Divertido.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="clan" start="20260319162000 +0000" stop="20260319164800 +0000">
+    <title>Big Band Clan</title>
+    <desc>T1 -Ep.13: Todo El Mundo Se. Las aventuras de cuatro niños en la hora extra matinal que comparten antes de entrar a clase con un loco maestro que les quiere mostrar las maravillas de la ciencia.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="clan" start="20260319164800 +0000" stop="20260319171500 +0000">
+    <title>Big Band Clan</title>
+    <desc>T1 -Ep.14: Quien Está Ahí. Las aventuras de cuatro niños en la hora extra matinal que comparten antes de entrar a clase con un loco maestro que les quiere mostrar las maravillas de la ciencia.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="clan" start="20260319171500 +0000" stop="20260319172200 +0000">
+    <title>Momonsters</title>
+    <desc>T1 -Ep.45: Hacer Fotos. Los Momonsters Haha, Hehe, Hihi, Hoho y Huhu quieren ser los mejores amigos de los niños pero.. Dónde se aprende a ser el mejor amigo de un niño? En la Academia Momonsters! Cada día un niño o niña diferente les mostrará qué es lo que más le gusta del mundo: jugar al escondite, decorar unos cupcakes, jugar al fútbol, bailar el hulahoop, leer un cómic.. Después les tocará a los Momonsters demostrar que son capaces de hacerlo ellos mismos.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="clan" start="20260319172200 +0000" stop="20260319173000 +0000">
+    <title>Momonsters</title>
+    <desc>T1 -Ep.46: Duelo De Risas. Los Momonsters Haha, Hehe, Hihi, Hoho y Huhu quieren ser los mejores amigos de los niños pero.. Dónde se aprende a ser el mejor amigo de un niño? En la Academia Momonsters! Cada día un niño o niña diferente les mostrará qué es lo que más le gusta del mundo: jugar al escondite, decorar unos cupcakes, jugar al fútbol, bailar el hulahoop, leer un cómic.. Después les tocará a los Momonsters demostrar que son capaces de hacerlo ellos mismos.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="clan" start="20260319173000 +0000" stop="20260319173800 +0000">
+    <title>Plum The Super Witch</title>
+    <desc>Ep.10: Travesuras De Dragón/Caos De Halloween. Plum es una bruja normal y optimista de seis años. Ella ayuda a su madre a atender la tienda de magia de la ciudad junto con su mejor amigo, Tony, y su dragón mascota, Blast.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="clan" start="20260319173800 +0000" stop="20260319174700 +0000">
+    <title>Plum The Super Witch</title>
+    <desc>Ep.11: El Nuevo Hogar De Dino/Problemas Con Mamá. Plum es una bruja normal y optimista de seis años. Ella ayuda a su madre a atender la tienda de magia de la ciudad junto con su mejor amigo, Tony, y su dragón mascota, Blast.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="clan" start="20260319174700 +0000" stop="20260319175600 +0000">
+    <title>Plum The Super Witch</title>
+    <desc>Ep.12: Dino Desastre/Dragones Dobles. Plum es una bruja normal y optimista de seis años. Ella ayuda a su madre a atender la tienda de magia de la ciudad junto con su mejor amigo, Tony, y su dragón mascota, Blast.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="clan" start="20260319175600 +0000" stop="20260319180000 +0000">
+    <title>El Diario De Alice</title>
+    <desc>Ep.27: Otro Emile. Alice es una niña curiosa que narra sus experiencias cotidianas en un diario lleno de imaginación. Acompañada por su perro, su gato y su mamá, transforma situaciones simples en aventuras mágicas.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="clan" start="20260319180000 +0000" stop="20260319183000 +0000">
+    <title>Aprendemos En Clan</title>
+    <desc>T1 -Ep.70: Buscas Poemas. Aprendemos en Clan es un formato esencialmente educativo, tipo contenedor, con una duración de 30 minutos y que está basado en programas temáticos que abordan transversalmente las distintas asignaturas, pudiendo cubrir distintos niveles de aprendizaje y conocimiento, conjugando piezas puramente educativas con momentos de puro entretenimiento.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="clarocinema" start="20260319150000 +0000" stop="20260319163000 +0000">
+    <title>El Zorro Escarlata</title>
+    <desc>La desaparición de una diligencia, las muertes de propietarios de tierras a cargo del Manos de fierro y un pueblo aterrado por las cuotas exigidas por el malvado Látigo, es lo que enfrenta nuestro héroe enmascarado en su camino hacia la justicia.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="clarocinema" start="20260319163000 +0000" stop="20260319183000 +0000">
+    <title>Barrio De Pasiones</title>
+    <desc>Una artista, atractiva música y joven intenta ganarse la vida trabajando como pianista de su padre, pero al morir éste y acosada por los problemas de dinero, se ve obligada a empeñar sus pertenencias más preciadas, incluyendo también su amado piano.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="clarosports" start="20260319150000 +0000" stop="20260319170000 +0000">
+    <title>Peloteando</title>
+    <desc>Programa de revista, en el que tenemos el resumen de lo mejor en el mundo del deporte nacional e internacional. Durante dos horas nos da un recorrido ameno por la actividad del día, con información importante, enlaces, reportajes, entrevistas, invitados en el estudio, colaboradores especializados, análisis, polémica de los temas relevantes, así como lo más viral de las redes sociales.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="clarosports" start="20260319170000 +0000" stop="20260319174000 +0000">
+    <title>Uefa Previo</title>
+    <desc>Previo de la UEFA Europa League que es la segunda competición continental de clubes de fútbol más prestigiosa de Europa, organizada por la UEFA. Permite a los equipos que no se clasifican para la Liga de Campeones (Champions League) competir internacionalmente, y otorga un pase a la siguiente edición de la Champions League al equipo campeón</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="clarosports" start="20260319174000 +0000" stop="20260319195000 +0000">
+    <title>Lyon Vs Celta De Vigo - Uefa Europa League - 8Vos Vuelta</title>
+    <desc>La UEFA Europa League es la segunda competición continental de clubes de fútbol más prestigiosa de Europa, organizada por la UEFA. Permite a los equipos que no se clasifican para la Liga de Campeones (Champions League) competir internacionalmente, y otorga un pase a la siguiente edición de la Champions League al equipo campeón.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="clarosportsuefa" start="20260319110000 +0000" stop="20260319170000 +0000">
+    <title>Claro Sports UEFA 1</title>
+    <desc>Programación Claro Sports UEFA 1</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="clarosportsuefa" start="20260319170000 +0000" stop="20260319174500 +0000">
+    <title>Claro Sports UEFA 1</title>
+    <desc>Programación Claro Sports UEFA 1</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="clarosportsuefa" start="20260319174500 +0000" stop="20260319200000 +0000">
+    <title>SC Friburgo vs. KRC Geng (Octavos de Final Vuelta - UEFA Europa League)</title>
+    <desc>UEFA Europa League Octavos de Final Vuelta: SC Friburgo vs. KRC Geng.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="concertchannel" start="20260319150000 +0000" stop="20260319163000 +0000">
+    <title>Jean-Michel Jarre - Live At Coachella</title>
+    <desc>The Coachella Valley Music and Arts Festival is an annual music and arts festival held at the Empire Polo Club in Indio, California. Jean-Michel Jarre has set Guinness Book of World Record attendance marks for his concerts in Houston and in his native France. Several of his outdoor spectaculars have drawn more than 1 million people.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="concertchannel" start="20260319163000 +0000" stop="20260319180000 +0000">
+    <title>Beabadoobee Rock En Seine Festival</title>
+    <desc>Rising star Beabadoobee makes her debut at Rock en Seine 2022!</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="concertchannel" start="20260319180000 +0000" stop="20260319191500 +0000">
+    <title>Other Voices</title>
+    <desc>T23 -Ep.1: Lisa O&apos;Neill / Bashy / Rachael Lavelle / David Murphy. Other Voices is an acclaimed music television series and festival from Ireland that brings together Irish and international musicians in intimate live performances.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="edye" start="20260319160000 +0000" stop="20260319163000 +0000">
+    <title>Rosita Fresita: Aventuras En Tutti Frutti</title>
+    <desc>Rosita Fresita se despide de su ciudad natal y se muda con su tía Almendra a la Gran Manzana, junto con su gato, Cremita.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="edye" start="20260319163000 +0000" stop="20260319170000 +0000">
+    <title>Heidi</title>
+    <desc>Clara, una joven en silla de ruedas, espera a su nueva compañera, Heidi.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="edye" start="20260319170000 +0000" stop="20260319171500 +0000">
+    <title>Plim Plim Canciones</title>
+    <desc>Canciones Divertidas De Plim Plim Para Bailar Y Cantar Canciones Infantiles</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="edye" start="20260319171500 +0000" stop="20260319173000 +0000">
+    <title>El Elevador De Albie</title>
+    <desc>Albie explora sus grandes sentimientos y conoce sobre la amistad con la ayuda de sus vecinos.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="edye" start="20260319173000 +0000" stop="20260319174500 +0000">
+    <title>Clifford</title>
+    <desc>Bailey está enferma. Clifford y Emily Elizabeth le preparan galletas para que se recupere.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="edye" start="20260319174500 +0000" stop="20260319175500 +0000">
+    <title>Abby Y La Escuela Mágica</title>
+    <desc>Abby y la escuela mágica ayuda a promover las habilidades de los niños para razonar y resolver problemas.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="edye" start="20260319175500 +0000" stop="20260319180000 +0000">
+    <title>Rosita Fresita En La Gran Ciudad</title>
+    <desc>Rosita Fresita se despide de su ciudad natal y se muda con su tía Almendra a la Gran Manzana, junto con su gato, Cremita.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="edye" start="20260319180000 +0000" stop="20260319181500 +0000">
+    <title>Doozers</title>
+    <desc>La acción se desarrolla en Doozer Creek, una comunidad autosostenible. Todas sus ingeniosas aventuras se centran en la cooperación, el trabajo en equipo, la invención, la tecnología y la conciencia ambiental.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="edye" start="20260319181500 +0000" stop="20260319183000 +0000">
+    <title>La Abeja Maya</title>
+    <desc>Vesper está enamorado de Beatrice y Maya decide ayudarlo.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="fox" start="20260319110000 +0000" stop="20260319170000 +0000">
+    <title>FOX ONE</title>
+    <desc>Programación FOX ONE</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="fox" start="20260319170000 +0000" stop="20260319230000 +0000">
+    <title>FOX ONE</title>
+    <desc>Programación FOX ONE</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="foxone1" start="20260319110000 +0000" stop="20260319170000 +0000">
+    <title>FOX ONE 1</title>
+    <desc>Programación FOX ONE 1</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="foxone1" start="20260319170000 +0000" stop="20260319230000 +0000">
+    <title>FOX ONE 1</title>
+    <desc>Programación FOX ONE 1</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="foxone2" start="20260319110000 +0000" stop="20260319170000 +0000">
+    <title>FOX ONE 2</title>
+    <desc>Programación FOX ONE 2</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="foxone2" start="20260319170000 +0000" stop="20260319230000 +0000">
+    <title>FOX ONE 2</title>
+    <desc>Programación FOX ONE 2</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="foxone3" start="20260319110000 +0000" stop="20260319170000 +0000">
+    <title>FOX ONE 3</title>
+    <desc>Programación FOX ONE 3</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="foxone3" start="20260319170000 +0000" stop="20260319230000 +0000">
+    <title>FOX ONE 3</title>
+    <desc>Programación FOX ONE 3</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="foxone4" start="20260319110000 +0000" stop="20260319170000 +0000">
+    <title>FOX ONE 4</title>
+    <desc>Programación FOX ONE 4</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="foxone4" start="20260319170000 +0000" stop="20260319230000 +0000">
+    <title>FOX ONE 4</title>
+    <desc>Programación FOX ONE 4</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="foxone5" start="20260319110000 +0000" stop="20260319170000 +0000">
+    <title>FOX ONE 5</title>
+    <desc>Programación FOX ONE 5</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="foxone5" start="20260319170000 +0000" stop="20260319230000 +0000">
+    <title>FOX ONE 5</title>
+    <desc>Programación FOX ONE 5</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="foxone6" start="20260319110000 +0000" stop="20260319170000 +0000">
+    <title>FOX ONE 6</title>
+    <desc>Programación FOX ONE 6</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="foxone6" start="20260319170000 +0000" stop="20260319230000 +0000">
+    <title>FOX ONE 6</title>
+    <desc>Programación FOX ONE 6</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="foxone7" start="20260319110000 +0000" stop="20260319170000 +0000">
+    <title>FOX ONE 7</title>
+    <desc>Programación FOX ONE 7</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="foxone7" start="20260319170000 +0000" stop="20260319230000 +0000">
+    <title>FOX ONE 7</title>
+    <desc>Programación FOX ONE 7</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="foxone8" start="20260319110000 +0000" stop="20260319170000 +0000">
+    <title>FOX ONE 8</title>
+    <desc>Programación FOX ONE 8</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="foxone8" start="20260319170000 +0000" stop="20260319230000 +0000">
+    <title>FOX ONE 8</title>
+    <desc>Programación FOX ONE 8</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="foxsports" start="20260319160000 +0000" stop="20260319170000 +0000">
+    <title>Más 90</title>
+    <desc>Lo mejor del deporte a nivel mundial te lo trae Fox Sports.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="foxsports" start="20260319170000 +0000" stop="20260319193000 +0000">
+    <title>Tacoma Stars Vs Baltimore Blast - Major Arena Soccer League2025/2026</title>
+    <desc>La Major Arena Soccer League (MASL) es una liga Fútbol Rápido Profesional o como se le conoce en Sudamérica Showbol, la MASL está establecida en América del Norte y fue formada por la fusión de la MISL (Liga del Atlántico) y la PASL (Liga del Pacífico). La MASL está compuesta por clubes de Estados Unidos, México y Canadá.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="foxsports2" start="20260319150000 +0000" stop="20260319173000 +0000">
+    <title>San Diego Sockers Vs Kansas City Comets - Major Arena Soccer League2025/2026</title>
+    <desc>La Major Arena Soccer League (MASL) es una liga Fútbol Rápido Profesional o como se le conoce en Sudamérica Showbol, la MASL está establecida en América del Norte y fue formada por la fusión de la MISL (Liga del Atlántico) y la PASL (Liga del Pacífico). La MASL está integrada por clubes de Estados Unidos, México y Canadá cuyos países también son miembros afiliados a la World Minifootball Federation (WMF), el órgano rector de este deporte.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="foxsports2" start="20260319173000 +0000" stop="20260319183000 +0000">
+    <title>Budo Combat</title>
+    <desc>Budo Sento Championship (BSC), también conocida como Budo SC, es una organización de artes marciales mixtas con sede en México fundada en 2020. Budo SC no solo organiza peleas de MMA, sino también de kickboxing, submission grappling y muay thai.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="foxsports3" start="20260319160000 +0000" stop="20260319180000 +0000">
+    <title>Budo Sento Championship</title>
+    <desc>Budo Sento Championship (BSC), también conocida como Budo SC, es una organización de artes marciales mixtas con sede en México fundada en 2020. Budo SC no solo organiza peleas de MMA, sino también de kickboxing, submission grappling y muay thai.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="foxsports3" start="20260319180000 +0000" stop="20260319200000 +0000">
+    <title>Aew Dynamite</title>
+    <desc>AEW Dynamite , también conocido como Wednesday Night Dynamite o simplemente Dynamite , es unprograma de televisión de lucha libre profesional estadounidense producido por la promoción estadounidense All Elite Wrestling (AEW).</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="foxsportspremiummexico" start="20260319160000 +0000" stop="20260319170000 +0000">
+    <title>Budo Combat</title>
+    <desc>Budo Sento Championship (BSC), también conocida como Budo SC, es una organización de artes marciales mixtas con sede en México fundada en 2020. Budo SC no solo organiza peleas de MMA, sino también de kickboxing, submission grappling y muay thai.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="foxsportspremiummexico" start="20260319170000 +0000" stop="20260319180000 +0000">
+    <title>Más 90</title>
+    <desc>Lo mejor del deporte a nivel mundial te lo trae Fox Sports.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="foxsportspremiummexico" start="20260319180000 +0000" stop="20260319190000 +0000">
+    <title>Fox Gol Femenil</title>
+    <desc>Toda la acción del fútbol a nivel mundial en su fase de pretemporadas, vivelo por Fox Sports.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="hbo2channel" start="20260319154100 +0000" stop="20260319180100 +0000">
+    <title>Jurassic World: Renace</title>
+    <desc>Cinco años después de Jurassic World: Dominion, una expedición se aventura en remotas regiones ecuatoriales para extraer ADN de tres enormes criaturas prehistóricas, con el objetivo de lograr un avance médico revolucionario.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="hbo2channel" start="20260319180100 +0000" stop="20260319205500 +0000">
+    <title>It: Capítulo Dos</title>
+    <desc>Han pasado veintisiete años y Eso está de vuelta en Derry. Los miembros del Club de los Perdedores, ya adultos y traumatizados por el pasado, deberán vencer sus miedos más profundos para derrotar a Pennywise de una vez por todas.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="hbochannel" start="20260319144600 +0000" stop="20260319164000 +0000">
+    <title>El Vengador Del Futuro</title>
+    <desc>Un trabajador de una fábrica, Douglas Quaid, comienza a sospechar que es un espía después de visitar Rekall, una empresa que ofrece a sus clientes recuerdos falsos implantados de una vida que les gustaría haber llevado.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="hbochannel" start="20260319164000 +0000" stop="20260319185600 +0000">
+    <title>Inferno</title>
+    <desc>El famoso iconólogo Robert Langon se despierta en un restaurant italiano con amnesia y asediado por asesinos. Con la ayuda de la doctora Sienna Brooks, Robert sigue una serie de pistas dejadas por el mismísimo Dante para detener un virus mortal mientras intenta recuperar su memoria. Tom Hanks y Felicity Jones protagonizan esta entrega de la saga basada en los exitosos libros de Dan Brown.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="hbofamilychannel" start="20260319153700 +0000" stop="20260319171300 +0000">
+    <title>Scooby!</title>
+    <desc>El detective canino más adorable y la pandilla de Misterios S.A. deben enfrentar su mayor desafío e impedir un perro-apocalípsis.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="hbofamilychannel" start="20260319171300 +0000" stop="20260319195700 +0000">
+    <title>Wicked</title>
+    <desc>La historia de cómo una joven de piel verde es incriminada por el Mago de Oz y se convierte en la Malvada Bruja del Oeste. La primera de una adaptación cinematográfica en dos partes del musical de Broadway.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="hbomundi" start="20260319150500 +0000" stop="20260319173000 +0000">
+    <title>Todo En Todas Partes Al Mismo Tiempo</title>
+    <desc>Película.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="hbomundi" start="20260319173000 +0000" stop="20260319193000 +0000">
+    <title>Priscilla</title>
+    <desc>Película.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="hbopluschannel" start="20260319155100 +0000" stop="20260319172100 +0000">
+    <title>Un Verano Infernal</title>
+    <desc>Película.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="hbopluschannel" start="20260319172100 +0000" stop="20260319184600 +0000">
+    <title>La Horca</title>
+    <desc>Un grupo de estudiantes decide recrear una obra teatral en la cual un estudiante falleció en extrañas circunstancias, veinte años atrás.. Pronto descubrirán que están siendo acechados por algo que parecía un simple recuerdo.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="hbopopchannel" start="20260319151500 +0000" stop="20260319170000 +0000">
+    <title>Noche De Juegos</title>
+    <desc>Max y Annie son una pareja que disfruta las noches de juegos con sus amigos. Pero cuando el hermano de Max, Brooke, decide organizar una fiesta de misterio policial, con matones y agentes federales falsos, las cosas se salen de control. Así que cuando Brooke es secuestrado, todos piensan que es parte del juego y continúan sólo para ganar el premio, hasta que se dan cuenta de que este juego no es lo que parece.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="hbopopchannel" start="20260319170000 +0000" stop="20260319185900 +0000">
+    <title>Una Esposa De Mentira</title>
+    <desc>En un viaje de fin de semana a Hawai, un cirujano plástico convence a su fiel asistente de hacerse pasar por su futura ex-esposa con el fin de cubrir una mentira descuidada que le dijo a su novia mucho más joven.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="hbosignaturenew" start="20260319144700 +0000" stop="20260319163100 +0000">
+    <title>Patios Radioactivos</title>
+    <desc>Este documental cautelar investiga el impacto médico y ambiental de un vertedero de desecho nuclear permanente en dos comunidades, cada vez más desesperadas, de St. Louis.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="hbosignaturenew" start="20260319163100 +0000" stop="20260319181700 +0000">
+    <title>Fahrenheit 451</title>
+    <desc>En un futuro alterno, brigadas de bomberos se dedican a quemar libros clásicos. Sin embargo, uno de los miembros más prometedores del equipo cuestiona su deber y luego de conocer una informante, este decide ayudar a un grupo de insurgentes.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="hbosignaturenew" start="20260319181700 +0000" stop="20260319200400 +0000">
+    <title>Di Su Nombre: La Vida Y Muerte De Sandra Bland</title>
+    <desc>Documental de HBO que explora la muerte de Sandra Bland, una afroamericana políticamente activa que, luego de ser arrestada por una infracción de tránsito en una pequeña ciudad de Texas, fue encontrada colgada en su celda tres días después.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="hboxtreme" start="20260319151600 +0000" stop="20260319164800 +0000">
+    <title>Lucy</title>
+    <desc>Lucy es obligada a transportar una potente droga en su estómago. Tras recibir una golpiza, el paquete se rompe y la sustancia se dispersa en su organismo. Ahora podrá usar el 100 de la capacidad de su cerebro y desarrollará poderes inimaginables.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="hboxtreme" start="20260319164800 +0000" stop="20260319192100 +0000">
+    <title>Furiosa: De La Saga Mad Max</title>
+    <desc>Al caer el mundo, la joven Furiosa es arrebatada del Lugar Verde de Muchas Madres y cae en manos de una gran horda de motoristas liderada por el señor de la guerra Dementus.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="holatvhd" start="20260319150000 +0000" stop="20260319170000 +0000">
+    <title>Las Reinas Del Shopping</title>
+    <desc>Un programa sobre compra de prendas de vestir, donde cinco mujeres deben competir con un tiempo y un presupuesto limitado para conseguir un atuendo completo.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="holatvhd" start="20260319170000 +0000" stop="20260319180000 +0000">
+    <title>La Hora Hola</title>
+    <desc>Entrevistas exclusivas con los artistas del momento, glamour, moda, lujo sobre la farándula internacional y la realeza.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="holatvhd" start="20260319180000 +0000" stop="20260319190000 +0000">
+    <title>Íntimo Y Personal</title>
+    <desc>Un espacio de cercanía con personajes únicos, donde nos revelan detalles de su vida de manera exclusiva, donde vemos el detrás de cámaras, la cotidianidad, los sentimientos, los secretos y los afectos como solo Hola TV lo puede mostrar.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="plimplim" start="20260319160000 +0000" stop="20260319163000 +0000">
+    <title>La Hora De Plaza Sésamo</title>
+    <desc>Un lugar mágico lleno de aprendizaje y diversión, donde Elmo y todos sus amigos nos invitan a explorar el mundo a través de canciones, juegos y aventuras.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="plimplim" start="20260319163000 +0000" stop="20260319164500 +0000">
+    <title>El Payaso Plim Plim, Un Héroe Del Corazón</title>
+    <desc>Episodios en donde Plim Plim y sus amigos viven aventuras mágicas y aprenden sobre los valores humanos y hábitos positivos.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="plimplim" start="20260319164500 +0000" stop="20260319170000 +0000">
+    <title>Aprendiendo Las Formas</title>
+    <desc>Juegos didácticos donde aprenderán las formas junto a Plim Plim.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="plimplim" start="20260319170000 +0000" stop="20260319171500 +0000">
+    <title>Cantando Y Bailando Con Plim Plim</title>
+    <desc>Todas las canciones del mundo de Plim Plim y sus amigos para cantar, bailar y divertirse en familia.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="plimplim" start="20260319171500 +0000" stop="20260319173000 +0000">
+    <title>Aprendiendo Con Plim Plim</title>
+    <desc>Contenidos didácticos que proponen estimular a los niños en el aprendizaje de números, letras, formas, colores y muchas cosas más. Aprende sonriendo de la mano del payaso Plim Plim y sus amigos.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="plimplim" start="20260319173000 +0000" stop="20260319174500 +0000">
+    <title>Dibujando Juntos</title>
+    <desc>Pinceles, papeles, pintura y más colores en episodios, canciones y contenido didáctico especial del mágico mundo de Plim Plim.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="plimplim" start="20260319174500 +0000" stop="20260319180000 +0000">
+    <title>El Payaso Plim Plim, Un Héroe Del Corazón</title>
+    <desc>Episodios en donde Plim Plim y sus amigos viven aventuras mágicas y aprenden sobre los valores humanos y hábitos positivos.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="plimplim" start="20260319180000 +0000" stop="20260319181500 +0000">
+    <title>Cantando Y Bailando Con Plim Plim</title>
+    <desc>Todas las canciones del mundo de Plim Plim y sus amigos para cantar, bailar y divertirse en familia.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="plimplim" start="20260319181500 +0000" stop="20260319183000 +0000">
+    <title>Aprendiendo Con Plim Plim</title>
+    <desc>Contenidos didácticos que proponen estimular a los niños en el aprendizaje de números, letras, formas, colores y muchas cosas más. Aprende sonriendo de la mano del payaso Plim Plim y sus amigos.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="startve" start="20260319161000 +0000" stop="20260319171000 +0000">
+    <title>Salón De Té La Moderna</title>
+    <desc>Ep.48. Teresa le pide a miguel que le haga el favor de cuidarle a su periquito. matilde además tendrá unos días libres en la moderna. antonia no pierde la esperanza de encontrar a marta.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="startve" start="20260319171000 +0000" stop="20260319180000 +0000">
+    <title>La Promesa</title>
+    <desc>Ep.658. Manuel se arrepiente de haberle hablado mal a su padre. ángela y curro celebran la calma tras la detención de lorenzo. la madre de vera le cuenta que federico no quiere saber nada de ella. toño se enfrenta a simona y candela por intentar sonsacar a enora sobre su relación.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="startve" start="20260319180000 +0000" stop="20260319190000 +0000">
+    <title>La Promesa</title>
+    <desc>Ep.659. Petra exige a pía explicaciones sobre su presencia en el despacho de cristóbal. el mayordomo está teniendo encuentros en secreto muy extraños con ángela y con leocadia. la madre de vera vuelve a palacio y esta vez la descubre cristóbal.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="tve" start="20260319145500 +0000" stop="20260319164500 +0000">
+    <title>Directo Al Grano</title>
+    <desc>Magacine de actualidad social y politica con secciones de humor y de verificacion de noticias falsas. SUBT.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="tve" start="20260319164500 +0000" stop="20260319174000 +0000">
+    <title>Las Rutas De...</title>
+    <desc>Hoy vamos a conocer tres maravillosas islas: La Gomera,La Palma y el Hierro.Veronica se encuentra en el parque de Garajonay una de las mayores masas forestales de Canarias. Se prepara para probar el queso ahumado de Igualero. SUBT.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="tve" start="20260319174000 +0000" stop="20260319182500 +0000">
+    <title>Saber Y Ganar</title>
+    <desc>Programa concurso diario en el que tres participantes demuestran sus conocimientos y su agilidad mental. Concursantes: MnNICA RICART, DAVID EZQUERRO, CLARA BARRASA. SUBT.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="universalcinemahd" start="20260319151000 +0000" stop="20260319180000 +0000">
+    <title>Interestelar</title>
+    <desc>Basada en una teoría científica desarrollada por el físico de Caltech Kip Thorne. Un grupo de exploradores viaja a través de un agujero de gusano a otra dimensión.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="universalcinemahd" start="20260319180000 +0000" stop="20260319203000 +0000">
+    <title>Tenet</title>
+    <desc>En medio de la lucha por la supervivencia del mundo entero, el protagonista viajará a través de una dimensión paralela de espionaje internacional y llegará más allá del tiempo presente.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="universalcomedyhd" start="20260319161500 +0000" stop="20260319164000 +0000">
+    <title>The Good Place</title>
+    <desc>T3 -Ep.4: El Quitanieves. Una noticia sorprendente de unno de los humanos amenaza con disolver el grupo.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="universalcomedyhd" start="20260319164000 +0000" stop="20260319170500 +0000">
+    <title>Brooklyn Nine-Nine</title>
+    <desc>T7 -Ep.1: La Cacería Humana. Jake encabeza la persecución del hombre que intentó asesinar a un concejal del Ayuntamiento de Nueva York.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="universalcomedyhd" start="20260319170500 +0000" stop="20260319173000 +0000">
+    <title>Brooklyn Nine-Nine</title>
+    <desc>T7 -Ep.2: La Capitana Kim. La nueva capitana de la 99 invita a Jake y el resto de los policías a cenar en su casa para congraciarse con ellos.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="universalcomedyhd" start="20260319173000 +0000" stop="20260319175500 +0000">
+    <title>Brooklyn Nine-Nine</title>
+    <desc>T7 -Ep.3: Pimento Pierde La Memoria. Adrián Pimento aparece de forma inesperada para pedirle ayuda a Jake y a Charles, ya que asegura que alguien intenta matarlo.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="universalcomedyhd" start="20260319175500 +0000" stop="20260319182000 +0000">
+    <title>Brooklyn Nine-Nine</title>
+    <desc>T7 -Ep.4: Los Juegos Jimmy Jab II. Cunde el espíritu competitivo cuando Jake y la brigada compiten en los segundos Juegos Jimmy Jab.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="universalcomedyhd" start="20260319182000 +0000" stop="20260319184500 +0000">
+    <title>Brooklyn Nine-Nine</title>
+    <desc>T7 -Ep.5: Debbie. Cuando roban cocaína y armas del depósito de pruebas, la brigada debe investigar su propia comisaría.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="universalcrimehd" start="20260319154500 +0000" stop="20260319163000 +0000">
+    <title>Accidente, Suicidio, O Asesinato</title>
+    <desc>T4 -Ep.2: El Padre Conoce La Muerte. Dos accidentes inusuales con dos décadas de diferencia hacen que una familia sospeche de un padre que parece beneficiarse de la tragedia.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="universalcrimehd" start="20260319163000 +0000" stop="20260319171500 +0000">
+    <title>Accidente, Suicidio, O Asesinato</title>
+    <desc>T4 -Ep.3: El Cazador Y La Presa. Una joven madre inmigrante muere en un accidente de caza mientras estaba con su prometido.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="universalcrimehd" start="20260319171500 +0000" stop="20260319180000 +0000">
+    <title>Parejas Asesinas</title>
+    <desc>T15 -Ep.7: Kyle Navin Y Jennifer Valiente. La repentina desaparición de una pareja adinerada sacude su pequeño pueblo y lanza una investigación que expone una red de engaño, codicia y una sangrienta traición.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="universalcrimehd" start="20260319180000 +0000" stop="20260319184500 +0000">
+    <title>Parejas Asesinas</title>
+    <desc>T15 -Ep.8: Kristi Koslow Y Brian Salter. Cuando una pareja adinerada es víctima de una invasión mortal de su hogar, la búsqueda de los asesinos expone tanto una relación retorcida como una traición familiar que nadie vio venir.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="universalpremierehd" start="20260319155500 +0000" stop="20260319164000 +0000">
+    <title>FBI: Most Wanted</title>
+    <desc>T5 -Ep.5: Desesperados. Cuando un equipo de debate de escuela secundaria y su profesor de inglés son secuestrados en una zona rural de Pensilvania, la Fuerza de Tareas de Fugitivos corre a la escena para averiguar quién los secuestró.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="universalpremierehd" start="20260319164000 +0000" stop="20260319172500 +0000">
+    <title>FBI: Most Wanted</title>
+    <desc>T5 -Ep.6: Expulsado Por Falta Personal. Cuando la Fuerza de Tareas de Fugitivos se moviliza para ayudar a arrestar a un tirador activo en un campus universitario en Queens, se encuentra en el deslumbrante mundo del básquetbol universitario.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="universalpremierehd" start="20260319172500 +0000" stop="20260319181000 +0000">
+    <title>FBI: Most Wanted</title>
+    <desc>T5 -Ep.7: Interpretación. El Grupo Especial de Fugitivos entra en acción después de que cuatro detectives sean asesinados a tiros durante un intercambio de prisioneros a las puertas de una cafetería de Nueva Jersey.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="universalpremierehd" start="20260319181000 +0000" stop="20260319185500 +0000">
+    <title>FBI</title>
+    <desc>T8 -Ep.10: Manada De Lobos. Se desata el caos en la ciudad cuando un ataque interrumpe los servicios de telefonía celular, internet y emergencias.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="universalrealityhd" start="20260319154500 +0000" stop="20260319163000 +0000">
+    <title>Below Deck Veleros De Lujo</title>
+    <desc>T1 -Ep.7: Uf! Ahí Está!. Después de presenciar a los invitados tener una descontrolada fiesta, el Capitán Glenn se mantiene firme y establece límites a este alquiler lleno de testosterona.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="universalrealityhd" start="20260319163000 +0000" stop="20260319171500 +0000">
+    <title>Below Deck Veleros De Lujo</title>
+    <desc>T1 -Ep.8: Sin Sujetador, Sin Zapatos, Mal Servicio. Adam y Jenna no están de acuerdo en cuál es la situación de su relación, y su épica discusión en los puentes aéreos desanima al resto de la tripulación.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="universalrealityhd" start="20260319171500 +0000" stop="20260319180000 +0000">
+    <title>Below Deck Veleros De Lujo</title>
+    <desc>T1 -Ep.9: La Gran Aventura De Parker. Jenna y Adam recogen los pedazos del picnic playero fallido de Madison y Ciara, mientras Georgia se acerca para sorprender a los pasajeros. Jenna descubre por qué Madison está tan exhausta todo el tiempo.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="universalrealityhd" start="20260319180000 +0000" stop="20260319184500 +0000">
+    <title>The Real Housewives Of Salt Lake City</title>
+    <desc>T3 -Ep.15: Reunión, Parte 1. Las Housewives de Salt Lake City traen el frío a Nueva York para enfrentarse después de una temporada impredecible.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="unotv" start="20260319050000 +0000" stop="20260319170000 +0000">
+    <title>Las Noticias En Claro</title>
+    <desc>Noticiero De Referencia Obligada En El Periodismo En México Y El Mundo. La Trayectoria De Su Conductor, José Cárdenas Ha Convertido A Este Espacio De Noticias En Consulta Obligada Para Los Especialistas En Temas De Política. Espacio Informativo Que Destaca Por El Puntual Análisis De Temas Coyunturales En Voz De Colaboradores Del Nivel De Jesús Silva Herzog-Márquez María Amparo Casar, Alejandra Cullen, Carlos Elizondo Mayer-Serra Y José Antonio Valdés Peña.</desc>
+    <date>20260319</date>
+  </programme>
+  <programme channel="unotv" start="20260319170000 +0000" stop="20260319190000 +0000">
+    <title>Uno Noticias</title>
+    <desc>Noticiero Que Destaca Por La Presencia Siempre Fresca De Sus Conductores Cuya Trayectoria En El Periodismo Garantiza Credibilidad Y Certeza En Los Contenidos. Las Noticias Nacionales E Internacionales, Así Como Las Tendencias En Redes Sociales Y Espectáculos Tienen El Mejor Escaparate En Este Espacio Informativo.</desc>
+    <date>20260319</date>
+  </programme>
+</tv>

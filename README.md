@@ -36,6 +36,7 @@ TZ=America/Monterrey
 ```
 
 `server.js` carga `.env` automaticamente al iniciar. Si `PUPPETEER_EXECUTABLE_PATH` esta definido pero no existe en el sistema actual, el servicio intenta usar el navegador por defecto de Puppeteer.
+Cuando `SOCKS_PROXY_URL` o `PROXY_USER` / `PROXY_PASS` requieren autenticacion, el servicio levanta un proxy local temporal para que Chromium pueda salir correctamente.
 
 Ejecutar:
 

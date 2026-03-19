@@ -2,6 +2,7 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const puppeteer = require('puppeteer');
+const proxyChain = require('proxy-chain');
 
 loadEnvFile(path.join(__dirname, '.env'));
 
@@ -49,6 +50,9 @@ let lastError = null;
 let lastDurationMs = null;
 let activeGeneration = null;
 let generationQueue = Promise.resolve();
+let anonymizedProxyUrl = null;
+let anonymizedProxyUpstreamUrl = null;
+let anonymizedProxyPromise = null;
 
 const pendingGenerations = new Map();
 
@@ -211,6 +215,29 @@ function createHttpError(status, message) {
   const error = new Error(message);
   error.status = status;
   return error;
+}
+
+function redactProxyUrl(value) {
+  try {
+    const parsed = new URL(value);
+    return `${parsed.protocol}//${parsed.hostname}:${parsed.port}`;
+  } catch {
+    return value;
+  }
+}
+
+function buildUpstreamProxyUrl(protocol, host, port, username = '', password = '') {
+  const parsed = new URL(`${protocol}://${host}:${port}`);
+
+  if (username) {
+    parsed.username = username;
+  }
+
+  if (password) {
+    parsed.password = password;
+  }
+
+  return parsed.toString();
 }
 
 function formatApiDate(date) {
@@ -390,13 +417,14 @@ function getProxyConfig() {
   if (SOCKS_PROXY_URL) {
     try {
       const parsed = new URL(SOCKS_PROXY_URL);
+      const authEnabled = Boolean(parsed.username || parsed.password);
 
       return {
-        proxyServerArg: `${parsed.protocol}//${parsed.hostname}:${parsed.port}`,
-        username: decodeURIComponent(parsed.username || ''),
-        password: decodeURIComponent(parsed.password || ''),
-        display: `${parsed.protocol}//${parsed.hostname}:${parsed.port}`,
+        upstreamProxyUrl: SOCKS_PROXY_URL,
+        display: redactProxyUrl(SOCKS_PROXY_URL),
         type: parsed.protocol.replace(':', ''),
+        authEnabled,
+        usesProxyBridge: authEnabled,
       };
     } catch (err) {
       throw new Error(`SOCKS_PROXY_URL invalido: ${err.message}`);
@@ -404,16 +432,104 @@ function getProxyConfig() {
   }
 
   if (PROXY_HOST && PROXY_PORT) {
+    const upstreamProxyUrl = buildUpstreamProxyUrl(
+      'http',
+      PROXY_HOST,
+      PROXY_PORT,
+      PROXY_USER,
+      PROXY_PASS
+    );
+    const authEnabled = Boolean(PROXY_USER || PROXY_PASS);
+
     return {
-      proxyServerArg: `http://${PROXY_HOST}:${PROXY_PORT}`,
-      username: PROXY_USER,
-      password: PROXY_PASS,
-      display: `http://${PROXY_HOST}:${PROXY_PORT}`,
+      upstreamProxyUrl,
+      display: redactProxyUrl(upstreamProxyUrl),
       type: 'http',
+      authEnabled,
+      usesProxyBridge: authEnabled,
     };
   }
 
   return null;
+}
+
+async function ensureAnonymizedProxy(proxyConfig) {
+  if (!proxyConfig?.usesProxyBridge) {
+    return null;
+  }
+
+  if (
+    anonymizedProxyUrl &&
+    anonymizedProxyUpstreamUrl === proxyConfig.upstreamProxyUrl
+  ) {
+    return anonymizedProxyUrl;
+  }
+
+  if (
+    anonymizedProxyPromise &&
+    anonymizedProxyUpstreamUrl === proxyConfig.upstreamProxyUrl
+  ) {
+    return anonymizedProxyPromise;
+  }
+
+  anonymizedProxyUpstreamUrl = proxyConfig.upstreamProxyUrl;
+  anonymizedProxyPromise = proxyChain.anonymizeProxy(proxyConfig.upstreamProxyUrl)
+    .then((localProxyUrl) => {
+      anonymizedProxyUrl = localProxyUrl;
+      return localProxyUrl;
+    })
+    .catch((error) => {
+      anonymizedProxyUpstreamUrl = null;
+      throw error;
+    })
+    .finally(() => {
+      anonymizedProxyPromise = null;
+    });
+
+  return anonymizedProxyPromise;
+}
+
+async function closeAnonymizedProxyServer() {
+  if (!anonymizedProxyUrl) {
+    return false;
+  }
+
+  const proxyToClose = anonymizedProxyUrl;
+
+  anonymizedProxyUrl = null;
+  anonymizedProxyUpstreamUrl = null;
+  anonymizedProxyPromise = null;
+
+  try {
+    return await proxyChain.closeAnonymizedProxy(proxyToClose, true);
+  } catch (error) {
+    console.warn(`No se pudo cerrar el proxy local: ${error.message}`);
+    return false;
+  }
+}
+
+async function resolveBrowserProxyConfig() {
+  const proxyConfig = getProxyConfig();
+
+  if (!proxyConfig) {
+    return null;
+  }
+
+  if (!proxyConfig.usesProxyBridge) {
+    return {
+      ...proxyConfig,
+      browserProxyUrl: proxyConfig.upstreamProxyUrl,
+      browserProxyDisplay: proxyConfig.display,
+    };
+  }
+
+  const browserProxyUrl = await ensureAnonymizedProxy(proxyConfig);
+
+  return {
+    ...proxyConfig,
+    browserProxyUrl,
+    browserProxyDisplay: `${browserProxyUrl} -> ${proxyConfig.display}`,
+  };
 }
 
 async function launchBrowser() {
@@ -426,10 +542,10 @@ async function launchBrowser() {
     '--no-zygote',
   ];
 
-  const proxyConfig = getProxyConfig();
+  const proxyConfig = await resolveBrowserProxyConfig();
 
   if (proxyConfig) {
-    args.push(`--proxy-server=${proxyConfig.proxyServerArg}`);
+    args.push(`--proxy-server=${proxyConfig.browserProxyUrl}`);
   }
 
   const launchOptions = {
@@ -443,19 +559,14 @@ async function launchBrowser() {
     launchOptions.executablePath = executablePath;
   }
 
-  return puppeteer.launch(launchOptions);
+  return {
+    browser: await puppeteer.launch(launchOptions),
+    proxyConfig,
+  };
 }
 
 async function preparePage(browser) {
   const page = await browser.newPage();
-  const proxyConfig = getProxyConfig();
-
-  if (proxyConfig?.username && proxyConfig?.password) {
-    await page.authenticate({
-      username: proxyConfig.username,
-      password: proxyConfig.password,
-    });
-  }
 
   await page.setUserAgent(
     'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Mobile Safari/537.36'
@@ -585,12 +696,11 @@ async function fetchClaroVideoJsonWithPuppeteer({
   });
 
   const apiUrl = `https://mfwkweb-api.clarovideo.net/services/epg/channel?${params.toString()}`;
-  const proxyConfig = getProxyConfig();
+  const { browser, proxyConfig } = await launchBrowser();
 
   console.log('Consultando API:', apiUrl);
   console.log('Proxy activo:', proxyConfig ? proxyConfig.display : 'no');
-
-  const browser = await launchBrowser();
+  console.log('Proxy navegador:', proxyConfig ? proxyConfig.browserProxyDisplay : 'sin proxy');
 
   try {
     const page = await preparePage(browser);
@@ -602,30 +712,23 @@ async function fetchClaroVideoJsonWithPuppeteer({
 
     await new Promise((resolve) => setTimeout(resolve, 3000));
 
-    const result = await page.evaluate(async (url) => {
-      const res = await fetch(url, {
-        method: 'GET',
-        credentials: 'include',
-        headers: {
-          Accept: 'application/json, text/plain, */*',
-        },
-      });
+    const response = await page.goto(apiUrl, {
+      waitUntil: 'domcontentloaded',
+      timeout: 60000,
+    });
 
-      const text = await res.text();
+    if (!response) {
+      throw new Error('No hubo respuesta del API de ClaroVideo');
+    }
 
-      return {
-        ok: res.ok,
-        status: res.status,
-        text,
-      };
-    }, apiUrl);
+    const text = await response.text();
 
-    if (!result.ok) {
-      throw new Error(`HTTP ${result.status}: ${result.text.slice(0, 500)}`);
+    if (!response.ok()) {
+      throw new Error(`HTTP ${response.status()}: ${text.slice(0, 500)}`);
     }
 
     try {
-      return JSON.parse(result.text);
+      return JSON.parse(text);
     } catch {
       throw new Error('La respuesta no es JSON valido');
     }
@@ -635,7 +738,7 @@ async function fetchClaroVideoJsonWithPuppeteer({
 }
 
 async function getBrowserIp() {
-  const browser = await launchBrowser();
+  const { browser, proxyConfig } = await launchBrowser();
 
   try {
     const page = await preparePage(browser);
@@ -648,7 +751,16 @@ async function getBrowserIp() {
       throw new Error('No hubo respuesta consultando IP');
     }
 
-    return JSON.parse(await response.text());
+    return {
+      proxy: proxyConfig
+        ? {
+            upstream: proxyConfig.display,
+            browser: proxyConfig.browserProxyDisplay,
+            usesBridge: proxyConfig.usesProxyBridge,
+          }
+        : null,
+      ip: JSON.parse(await response.text()),
+    };
   } finally {
     await browser.close();
   }
@@ -823,7 +935,9 @@ app.get('/health', (req, res) => {
     proxyEnabled: Boolean(proxyConfig),
     proxyType: proxyConfig?.type || null,
     proxyDisplay: proxyConfig?.display || null,
-    proxyAuthEnabled: Boolean(proxyConfig?.username && proxyConfig?.password),
+    proxyAuthEnabled: Boolean(proxyConfig?.authEnabled),
+    proxyUsesBridge: Boolean(proxyConfig?.usesProxyBridge),
+    proxyBridgeUrl: anonymizedProxyUrl,
     adminProtectionEnabled: Boolean(ADMIN_TOKEN),
   });
 });
@@ -842,7 +956,8 @@ app.get('/debug-ip', async (req, res) => {
       proxyEnabled: Boolean(proxyConfig),
       proxyType: proxyConfig?.type || null,
       proxyDisplay: proxyConfig?.display || null,
-      proxyAuthEnabled: Boolean(proxyConfig?.username && proxyConfig?.password),
+      proxyAuthEnabled: Boolean(proxyConfig?.authEnabled),
+      proxyUsesBridge: Boolean(proxyConfig?.usesProxyBridge),
       ip,
     });
   } catch (error) {
@@ -859,6 +974,14 @@ function startServer() {
 
 if (require.main === module) {
   startServer();
+}
+
+for (const signal of ['SIGINT', 'SIGTERM', 'beforeExit']) {
+  process.on(signal, () => {
+    closeAnonymizedProxyServer().catch((error) => {
+      console.warn(`Error cerrando proxy local: ${error.message}`);
+    });
+  });
 }
 
 module.exports = {

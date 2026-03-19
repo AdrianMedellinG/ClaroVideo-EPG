@@ -238,7 +238,14 @@ async function fetchClaroVideoJsonWithPuppeteer({
   const browser = await puppeteer.launch({
     headless: true,
     executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium',
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-gpu',
+      '--no-first-run',
+      '--no-zygote'
+    ],
   });
 
   try {
@@ -254,36 +261,26 @@ async function fetchClaroVideoJsonWithPuppeteer({
       Referer: 'https://www.clarovideo.com/',
     });
 
-    await page.goto('https://www.clarovideo.com/', {
-      waitUntil: 'domcontentloaded',
+    const response = await page.goto(apiUrl, {
+      waitUntil: 'networkidle2',
       timeout: 60000,
     });
 
-    const result = await page.evaluate(async (url) => {
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json, text/plain, */*',
-        },
-      });
+    if (!response) {
+      throw new Error('No hubo respuesta al consultar la API');
+    }
 
-      const text = await response.text();
+    const status = response.status();
+    const text = await response.text();
 
-      return {
-        ok: response.ok,
-        status: response.status,
-        text,
-      };
-    }, apiUrl);
-
-    if (!result.ok) {
-      throw new Error(`HTTP ${result.status}: ${result.text.slice(0, 500)}`);
+    if (status < 200 || status >= 300) {
+      throw new Error(`HTTP ${status}: ${text.slice(0, 500)}`);
     }
 
     try {
-      return JSON.parse(result.text);
-    } catch {
-      throw new Error('La respuesta no es JSON válido');
+      return JSON.parse(text);
+    } catch (err) {
+      throw new Error(`La respuesta no es JSON válido: ${text.slice(0, 300)}`);
     }
   } finally {
     await browser.close();

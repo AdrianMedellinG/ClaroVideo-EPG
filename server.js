@@ -7,9 +7,16 @@ const app = express();
 
 const PORT = process.env.PORT || 3000;
 const XML_PATH = path.join(__dirname, 'clarovideo_epg.xml');
+
 const DEFAULT_PAIS = process.env.DEFAULT_PAIS || 'mexico';
 const DEFAULT_HOURS_BACK = Number(process.env.HOURS_BACK || 3);
 const DEFAULT_HOURS_AHEAD = Number(process.env.HOURS_AHEAD || 12);
+
+const PROXY_HOST = process.env.PROXY_HOST || '';
+const PROXY_PORT = process.env.PROXY_PORT || '';
+const PROXY_USER = process.env.PROXY_USER || '';
+const PROXY_PASS = process.env.PROXY_PASS || '';
+
 const CRON_INTERVAL_MS = 6 * 60 * 60 * 1000;
 
 let isRunning = false;
@@ -206,12 +213,55 @@ function buildXml(data) {
   return xml;
 }
 
+async function launchBrowser() {
+  const args = [
+    '--no-sandbox',
+    '--disable-setuid-sandbox',
+    '--disable-dev-shm-usage',
+    '--disable-gpu',
+    '--no-first-run',
+    '--no-zygote'
+  ];
+
+  if (PROXY_HOST && PROXY_PORT) {
+    args.push(`--proxy-server=http://${PROXY_HOST}:${PROXY_PORT}`);
+  }
+
+  return puppeteer.launch({
+    headless: true,
+    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium',
+    args,
+  });
+}
+
+async function preparePage(browser) {
+  const page = await browser.newPage();
+
+  if (PROXY_USER && PROXY_PASS) {
+    await page.authenticate({
+      username: PROXY_USER,
+      password: PROXY_PASS,
+    });
+  }
+
+  await page.setUserAgent(
+    'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Mobile Safari/537.36'
+  );
+
+  await page.setExtraHTTPHeaders({
+    Accept: 'application/json, text/plain, */*',
+    Origin: 'https://www.clarovideo.com',
+    Referer: 'https://www.clarovideo.com/',
+  });
+
+  return page;
+}
+
 async function fetchClaroVideoJsonWithPuppeteer({
   pais = DEFAULT_PAIS,
   hoursBack = DEFAULT_HOURS_BACK,
   hoursAhead = DEFAULT_HOURS_AHEAD
 } = {}) {
-
   const { date_from, date_to } = getDateRange(hoursBack, hoursAhead);
 
   const params = new URLSearchParams({
@@ -236,40 +286,27 @@ async function fetchClaroVideoJsonWithPuppeteer({
 
   const apiUrl = `https://mfwkweb-api.clarovideo.net/services/epg/channel?${params.toString()}`;
 
-  const browser = await puppeteer.launch({
-    headless: true,
-    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium',
-    args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--disable-dev-shm-usage',
-      '--disable-gpu'
-    ],
-  });
+  console.log('Consultando API:', apiUrl);
+  console.log('Proxy activo:', PROXY_HOST ? `${PROXY_HOST}:${PROXY_PORT}` : 'no');
+
+  const browser = await launchBrowser();
 
   try {
-    const page = await browser.newPage();
+    const page = await preparePage(browser);
 
-    await page.setUserAgent(
-      'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Mobile Safari/537.36'
-    );
-
-    // 🔥 PASO 1: entrar al sitio (esto genera cookies reales)
     await page.goto('https://www.clarovideo.com/', {
       waitUntil: 'networkidle2',
       timeout: 60000,
     });
 
-    // 🔥 PASO 2: esperar a que cargue JS / cookies
-    await new Promise(r => setTimeout(r, 3000));
+    await new Promise((resolve) => setTimeout(resolve, 3000));
 
-    // 🔥 PASO 3: hacer fetch desde el navegador (con cookies activas)
     const result = await page.evaluate(async (url) => {
       const res = await fetch(url, {
         method: 'GET',
-        credentials: 'include', // 🔥 CLAVE
+        credentials: 'include',
         headers: {
-          'Accept': 'application/json, text/plain, */*'
+          Accept: 'application/json, text/plain, */*'
         }
       });
 
@@ -283,11 +320,36 @@ async function fetchClaroVideoJsonWithPuppeteer({
     }, apiUrl);
 
     if (!result.ok) {
-      throw new Error(`HTTP ${result.status}: ${result.text.slice(0, 300)}`);
+      throw new Error(`HTTP ${result.status}: ${result.text.slice(0, 500)}`);
     }
 
-    return JSON.parse(result.text);
+    try {
+      return JSON.parse(result.text);
+    } catch {
+      throw new Error('La respuesta no es JSON válido');
+    }
+  } finally {
+    await browser.close();
+  }
+}
 
+async function getBrowserIp() {
+  const browser = await launchBrowser();
+
+  try {
+    const page = await preparePage(browser);
+
+    const response = await page.goto('https://api.ipify.org?format=json', {
+      waitUntil: 'networkidle2',
+      timeout: 30000,
+    });
+
+    if (!response) {
+      throw new Error('No hubo respuesta consultando IP');
+    }
+
+    const text = await response.text();
+    return JSON.parse(text);
   } finally {
     await browser.close();
   }
@@ -419,8 +481,29 @@ app.get('/health', (req, res) => {
     lastRunAt,
     lastSuccessAt,
     lastError,
-    cacheExists: fs.existsSync(XML_PATH)
+    cacheExists: fs.existsSync(XML_PATH),
+    proxyEnabled: Boolean(PROXY_HOST && PROXY_PORT),
+    proxyHost: PROXY_HOST || null,
+    proxyPort: PROXY_PORT || null
   });
+});
+
+app.get('/debug-ip', async (req, res) => {
+  try {
+    const ip = await getBrowserIp();
+    res.json({
+      ok: true,
+      proxyEnabled: Boolean(PROXY_HOST && PROXY_PORT),
+      proxyHost: PROXY_HOST || null,
+      proxyPort: PROXY_PORT || null,
+      ip
+    });
+  } catch (error) {
+    res.status(500).json({
+      ok: false,
+      error: error.message
+    });
+  }
 });
 
 app.listen(PORT, '0.0.0.0', () => {
